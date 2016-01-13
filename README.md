@@ -1,3 +1,0 @@
-# BibliotecaJavaFX
-
-Hola Joyce, guapa
