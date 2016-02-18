@@ -1,20 +1,15 @@
 ﻿/*
 Created: 10/02/2016
-Modified: 11/02/2016
+Modified: 18/02/2016
 Model: MySQL 5.5
 Database: MySQL 5.5
 */
 
-drop database if exists biblioteca;
-
-CREATE DATABASE Biblioteca;
-USE Biblioteca;
-
 -- Create tables section -------------------------------------------------
 
--- Table Permiso
+-- Table Rol
 
-CREATE TABLE Permiso
+CREATE TABLE Rol
 (
   Cod_Permiso Int NOT NULL AUTO_INCREMENT,
   Tipo Varchar(50),
@@ -37,17 +32,17 @@ CREATE TABLE Usuario
 )
 ;
 
--- Table Permisos_Usuarios
+-- Table Roles_Usuarios
 
-CREATE TABLE Permisos_Usuarios
+CREATE TABLE Roles_Usuarios
 (
   Cod_Permiso Int NOT NULL,
   Cod_usuario Int NOT NULL,
-  Activado Boolean
+  Activado Bool
 )
 ;
 
-ALTER TABLE Permisos_Usuarios ADD PRIMARY KEY (Cod_Permiso,Cod_usuario)
+ALTER TABLE Roles_Usuarios ADD PRIMARY KEY (Cod_Permiso,Cod_usuario)
 ;
 
 -- Table Editorial
@@ -66,7 +61,7 @@ CREATE TABLE Editorial
 CREATE TABLE Libro
 (
   Cod_Libro Int NOT NULL AUTO_INCREMENT,
-  Título Varchar(100),
+  Titulo Varchar(100),
  PRIMARY KEY (Cod_Libro),
  UNIQUE Cod_Libro (Cod_Libro)
 )
@@ -141,31 +136,31 @@ CREATE TABLE Sancion
 
 -- Create relationships section ------------------------------------------------- 
 
-ALTER TABLE Permisos_Usuarios ADD CONSTRAINT Permiso_Usuario FOREIGN KEY (Cod_Permiso) REFERENCES Permiso (Cod_Permiso) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Roles_Usuarios ADD CONSTRAINT Permiso_Usuario FOREIGN KEY (Cod_Permiso) REFERENCES Rol (Cod_Permiso) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Permisos_Usuarios ADD CONSTRAINT Usuario_Permiso FOREIGN KEY (Cod_usuario) REFERENCES Usuario (Cod_usuario) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Roles_Usuarios ADD CONSTRAINT Usuario_Permiso FOREIGN KEY (Cod_usuario) REFERENCES Usuario (Cod_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Editorial_Libro ADD CONSTRAINT Editorial_Libro FOREIGN KEY (Cod_Editorial) REFERENCES Editorial (Cod_Editorial) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Editorial_Libro ADD CONSTRAINT Editorial_Libro FOREIGN KEY (Cod_Editorial) REFERENCES Editorial (Cod_Editorial) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Editorial_Libro ADD CONSTRAINT Libro_Editorial FOREIGN KEY (Cod_Libro) REFERENCES Libro (Cod_Libro) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Editorial_Libro ADD CONSTRAINT Libro_Editorial FOREIGN KEY (Cod_Libro) REFERENCES Libro (Cod_Libro) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Autor_Libro ADD CONSTRAINT Libro_Autor FOREIGN KEY (Cod_Libro) REFERENCES Libro (Cod_Libro) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Autor_Libro ADD CONSTRAINT Libro_Autor FOREIGN KEY (Cod_Libro) REFERENCES Libro (Cod_Libro) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Autor_Libro ADD CONSTRAINT Autor_Libro FOREIGN KEY (Cod_Autor) REFERENCES Autor (Cod_Autor) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Autor_Libro ADD CONSTRAINT Autor_Libro FOREIGN KEY (Cod_Autor) REFERENCES Autor (Cod_Autor) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Prestamo ADD CONSTRAINT Libro_Prestamo FOREIGN KEY (Cod_Libro) REFERENCES Libro (Cod_Libro) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Prestamo ADD CONSTRAINT Libro_Prestamo FOREIGN KEY (Cod_Libro) REFERENCES Libro (Cod_Libro) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Prestamo ADD CONSTRAINT Usuario_Prestamo FOREIGN KEY (Cod_usuario) REFERENCES Usuario (Cod_usuario) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Prestamo ADD CONSTRAINT Usuario_Prestamo FOREIGN KEY (Cod_usuario) REFERENCES Usuario (Cod_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
-ALTER TABLE Sancion ADD CONSTRAINT Prestamo_Sancion FOREIGN KEY (Cod_Prestamo, Cod_Libro) REFERENCES Prestamo (Cod_Prestamo, Cod_Libro) ON DELETE NO ACTION ON UPDATE NO ACTION
+ALTER TABLE Sancion ADD CONSTRAINT Prestamo_Sancion FOREIGN KEY (Cod_Prestamo, Cod_Libro) REFERENCES Prestamo (Cod_Prestamo, Cod_Libro) ON DELETE CASCADE ON UPDATE CASCADE
 ;
 
 
