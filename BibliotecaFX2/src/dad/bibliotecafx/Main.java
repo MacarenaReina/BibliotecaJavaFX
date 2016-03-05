@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import dad.bibliotecafx.controller.BibliotecaPruebaController;
+import dad.bibliotecafx.controller.BibliotecaPrincipalController;
 import dad.bibliotecafx.controller.PrestamoInsertarController;
 import dad.bibliotecafx.controller.UsuarioAltaController;
 import dad.bibliotecafx.controller.UsuarioModificarController;
@@ -25,99 +25,62 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-
 public class Main extends Application {
-	
-//	UsuarioService usuarioService = new UsuarioService();
-	
+
 	private Stage primaryStage;
-	
+
 	private ObservableList<Libro> librosData;
 	private ObservableList<Usuario> usuariosData;
-	private ObservableList<Prestamo> prestamosData;	
+	private ObservableList<Prestamo> prestamosData;
 	private ObservableList<Rol> rolesData;
 
 	@Override
 	public void start(Stage primaryStage) {
 		DataBase.connect();
-		
+
+		actualizarRoles();
+
 		usuariosData = FXCollections.observableArrayList();
+		prestamosData = FXCollections.observableArrayList();
+		librosData = FXCollections.observableArrayList();
+		rolesData = FXCollections.observableArrayList();
+
 		try {
 			List<UsuarioItem> usuaiosItem = ServiceLocator.getUsuarioService().listarTodosUsuarios();
 			for (UsuarioItem usuarioItem : usuaiosItem) {
 				usuariosData.add(usuarioItem.toModel());
 			}
-		} catch (ServiceException e3) {
-			// TODO Auto-generated catch block
-			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
-			e3.printStackTrace();
-		}
-		
-		prestamosData = FXCollections.observableArrayList();
-		try {
+
 			List<PrestamoItem> prestamosList = ServiceLocator.getPrestamoService().listarPrestamos();
 			for (PrestamoItem prestamoItem : prestamosList) {
 				prestamosData.add(prestamoItem.toModel());
 			}
-		} catch (ServiceException e1) {
-			// TODO Auto-generated catch block
-			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
-			e1.printStackTrace();
-		}
-		
-		librosData = FXCollections.observableArrayList();
-		try {
+
 			List<LibroItem> librosLis = ServiceLocator.getLibroService().listarLibros();
 			for (LibroItem libroItem : librosLis) {
 				librosData.add(libroItem.toModel());
 			}
-		} catch (ServiceException e2) {
-			// TODO Auto-generated catch block
-			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
-			e2.printStackTrace();
-		}
-		
-		rolesData = FXCollections.observableArrayList();
-		try {
+
 			List<RolItem> rolesList = ServiceLocator.getRolService().listarRoles();
 			for (RolItem rolItem : rolesList) {
 				rolesData.add(rolItem.toModel());
 			}
-		} catch (ServiceException e1) {
+		} catch (ServiceException e2) {
 			// TODO Auto-generated catch block
-			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
-			e1.printStackTrace();
+			// Poner OptionPane que indique que ha ocurrido un error al
+			// consultar la Base de Datos
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al realizar consultas a la Base de Datos");
+			alert.showAndWait();
+			e2.printStackTrace();
 		}
-		
-//		try {
-//			List<LibroItem> librosList = ServiceLocator.getLibroService().listarLibros();
-//			librosData = FXCollections.observableArrayList(librosList);
-//		} catch (ServiceException e1) {
-//			e1.printStackTrace();
-//		}
-		
-		
-		//TODO me da error con los roles, creo q al listar los usuarios, pero no pone numero de linea.
-		
-//		try {
-//			List<UsuarioItem> usuariosList = ServiceLocator.getUsuarioService().listarTodosUsuarios();
-//			usuariosData = FXCollections.observableArrayList(usuariosList);
-//			
-////			personData = FXCollections.observableArrayList(usuariosList);
-////			for(int i=0;i<usuariosList.size();i++) {
-////				personData.add(usuariosList.get(i));
-////			}
-//		} catch (ServiceException e1) {
-//			e1.printStackTrace();
-//		}
-		
-//		BorderPane root = new BorderPane();
-//		Scene scene = new Scene(root, 400, 400);
-//		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-//		primaryStage.setScene(scene);
+
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("BibliotecaFX - Macarena y Joyce");
 		this.primaryStage.setWidth(800);
@@ -125,25 +88,26 @@ public class Main extends Application {
 		try {
 			showBibliotecaScene();
 		} catch (IOException e) {
-			//TODO: Mostrar mensaje, no ha sido posible iniciar la aplicación...
+			// TODO: Mostrar mensaje, no ha sido posible iniciar la
+			// aplicación...
 			e.printStackTrace();
 		}
-		
+
 		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-		    @Override
-		    public void handle(WindowEvent event) {
-		    	DataBase.disconnect();
-		    }
+			@Override
+			public void handle(WindowEvent event) {
+				DataBase.disconnect();
+			}
 		});
 	}
-	
-	private void showBibliotecaScene() throws IOException{
+
+	private void showBibliotecaScene() throws IOException {
 		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaUI.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
-		
-		Scene scene = new Scene(loader.load());		
-		
-		BibliotecaPruebaController controller = ((BibliotecaPruebaController) loader.getController());
+
+		Scene scene = new Scene(loader.load());
+
+		BibliotecaPrincipalController controller = ((BibliotecaPrincipalController) loader.getController());
 		controller.setMain(this);
 		controller.setFilterLibros(getLibrosData());
 		controller.setFilterUsuarios(getUsuariosData());
@@ -151,15 +115,15 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-	
+
 	public void showNuevoUsuarioScene() throws IOException {
 		Stage stage = new Stage();
 		stage.setTitle("Alta usuario");
-		stage.setWidth(300);
-		stage.setHeight(225);
+		stage.setWidth(400);
+		stage.setHeight(300);
 		stage.setResizable(false);
 		
-		URL url = getClass().getResource("views/BibliotecaNuevoUsuario.fxml");
+		URL url = getClass().getResource("docs/BibliotecaNuevoUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
@@ -170,7 +134,7 @@ public class Main extends Application {
 		controller.setRolesData(getRolesData());
 		
 		stage.setScene(scene);
-		stage.showAndWait();
+		stage.show();
 	}
 	
 	public void showModificarUsuarioScene() throws IOException {
@@ -180,16 +144,17 @@ public class Main extends Application {
 		stage.setHeight(225);
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("views/BibliotecaModificarUsuario.fxml");
+		URL url = getClass().getResource("docs/BibliotecaModificarUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
 		Scene scene = new Scene(loader.load());
 		
-		((UsuarioModificarController) loader.getController()).setMain(this);
+		UsuarioModificarController controller = ((UsuarioModificarController) loader.getController());
+		controller.setMain(this);
 		
 		stage.setScene(scene);
-		stage.showAndWait();
+		stage.show();
 	}
 	
 	public void showNuevoPrestamoScene() throws IOException {
@@ -199,16 +164,17 @@ public class Main extends Application {
 		stage.setHeight(600);
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("views/BibliotecaNuevoPrestamo.fxml");
+		URL url = getClass().getResource("docs/BibliotecaNuevoPrestamo.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
 		Scene scene = new Scene(loader.load());
 		
-		((PrestamoInsertarController) loader.getController()).setMain(this);
+		PrestamoInsertarController controller = ((PrestamoInsertarController) loader.getController());
+		controller.setMain(this);
 		
 		stage.setScene(scene);
-		stage.showAndWait();
+		stage.show();
 	}
 	
 //	public Stage getPrimaryStage() {
@@ -224,13 +190,25 @@ public class Main extends Application {
 	}
 	
 	public ObservableList<Rol> getRolesData() {
+		actualizarRoles();
 		return rolesData;
 	}
 	
 	public ObservableList<Prestamo> getPrestamosData() {
 		return prestamosData;
-	}
+	}	
 	
+	private void actualizarRoles() {
+		rolesData = FXCollections.observableArrayList();
+		try {
+			List<RolItem> rolesList = ServiceLocator.getRolService().listarRoles();
+			for (RolItem rolItem : rolesList) {
+				rolesData.add(rolItem.toModel());
+			}
+		} catch (ServiceException e1) {
+			e1.printStackTrace();
+		}
+	}
 
 	public static void main(String[] args) {
 		launch(args);
