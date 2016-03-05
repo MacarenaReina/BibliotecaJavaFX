@@ -1,17 +1,18 @@
 package dad.bibliotecafx.service.entidades;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,8 +28,10 @@ public class PrestamoEntity implements Serializable {
 	@Id
 	@GeneratedValue
 	private Long codigo;
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	private List<LibroEntity> libro = new ArrayList<LibroEntity>();
+//	@OneToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch =FetchType.LAZY)  
+	@JoinTable(name="Prestamo_Libro", joinColumns=@JoinColumn(name="codPrestamo"), inverseJoinColumns=@JoinColumn(name="ISBN")) 
+	private Set<LibroEntity> libro = new HashSet<LibroEntity>();
 	@ManyToOne
 	@JoinColumn(name="usuario")
 	private UsuarioEntity usuario;
@@ -45,11 +48,11 @@ public class PrestamoEntity implements Serializable {
 		this.codigo = codigo;
 	}
 
-	public List<LibroEntity> getLibro() {
+	public Set<LibroEntity> getLibro() {
 		return libro;
 	}
 
-	public void setLibro(List<LibroEntity> libro) {
+	public void setLibro(Set<LibroEntity> libro) {
 		this.libro = libro;
 	}
 
@@ -108,7 +111,7 @@ public class PrestamoEntity implements Serializable {
 		p.setFechaDevolucion(getFechaDevolucion());
 		p.setFechaPrestamo(getFechaPrestamo());
 		p.setUsuario(getUsuario().toItem());
-		List<LibroItem> libros = new ArrayList<LibroItem>();
+		Set<LibroItem> libros = new HashSet<LibroItem>();
 		for (LibroEntity libro : getLibro()) {
 			libros.add(libro.toItem());
 		}

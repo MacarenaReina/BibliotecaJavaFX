@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -23,7 +24,7 @@ public class EditorialEntity implements Serializable {
 	private Long codigo;
 	@Column(columnDefinition="VARCHAR(50)")
 	private String nombre;	
-	@OneToMany(mappedBy="editorial")	
+	@OneToMany(mappedBy="editorial", fetch=FetchType.LAZY)	
 	private List<LibroEntity> libros = new ArrayList<LibroEntity>();
 		
 	public Long getCodigo() {

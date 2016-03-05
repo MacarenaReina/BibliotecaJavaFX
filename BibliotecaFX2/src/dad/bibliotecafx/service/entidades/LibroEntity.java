@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,7 +32,7 @@ public class LibroEntity implements Serializable {
 	private EditorialEntity editorial;
 	@Column(columnDefinition="INTEGER")
 	private Integer anioPublicacion;	
-	@ManyToMany(cascade=CascadeType.ALL,fetch =FetchType.LAZY)  
+	@ManyToMany(fetch =FetchType.LAZY)  
 	@JoinTable(name="Autor_Libro", joinColumns=@JoinColumn(name="ISBN"), inverseJoinColumns=@JoinColumn(name="codAutor")) 
 	private Set<AutorEntity> autores = new HashSet<AutorEntity>();
 	

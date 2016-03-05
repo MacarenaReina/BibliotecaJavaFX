@@ -1,6 +1,9 @@
 package dad.bibliotecafx;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 //import java.text.ParseException;
@@ -10,13 +13,19 @@ import java.util.List;
 //import java.util.List;
 
 import dad.bibliotecafx.db.DataBase;
+import dad.bibliotecafx.modelo.Autor;
+import dad.bibliotecafx.modelo.Editorial;
+import dad.bibliotecafx.modelo.Libro;
+import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
+import dad.bibliotecafx.service.items.LibroItem;
 import dad.bibliotecafx.service.items.UsuarioItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 public class Main_HQL {
 
@@ -53,7 +62,7 @@ public class Main_HQL {
 //		} catch (ServiceException e1) {
 //			e1.printStackTrace();
 //		}
-		
+//		
 //		try {
 //			ObservableList<Sancion> sancion = FXCollections.observableArrayList(new ArrayList<Sancion>());
 //			List<SancionItem> sancionList = ServiceLocator.getSancionService().listarSanciones();
@@ -67,7 +76,7 @@ public class Main_HQL {
 //		} catch (ServiceException e1) {
 //			e1.printStackTrace();
 //		}
-		
+//		
 //		try {
 //			AutorItem autor = new AutorItem();
 //			Autor autor = new Autor();
@@ -76,7 +85,7 @@ public class Main_HQL {
 //			
 //			System.out.println("Todos los autores de la BD:");
 //			
-			
+//			
 //			try {
 //				List<AutorItem> autores = ServiceLocator.getAutorService().listarAutores();
 ////				for (AutorItem autorItem : autores) {
@@ -95,7 +104,7 @@ public class Main_HQL {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			
+//			
 //			
 //			AutorItem autorBorrar = new AutorItem();
 //			Autor autorBorrar = new Autor();
@@ -128,9 +137,9 @@ public class Main_HQL {
 //		}
 //
 //		try {
-//			Rol rolAdmin = new Rol();
-//			rolAdmin.setTipo("Administrador");
-//			rolAdmin.setCodigo(1);
+			Rol rolAdmin = new Rol();
+			rolAdmin.setTipo("Administrador");
+			rolAdmin.setCodigo(1);
 //			ServiceLocator.getRolService().crearRol(rolAdmin.toItem());
 //
 //			Usuario usuarioAdmin = new Usuario();
@@ -141,7 +150,7 @@ public class Main_HQL {
 //			
 //			ServiceLocator.getUsuarioService().crearUsuario(usuarioAdmin.toItem());
 //			
-//			usuarioAdmin.setCodigo(2);
+//			usuarioAdmin.setCodigo(1);
 //
 //			
 //			RolUsuario ru = new RolUsuario();
@@ -151,11 +160,11 @@ public class Main_HQL {
 //			
 //			ServiceLocator.getRolService().asignarRol(ru.toItem());
 //
-//			Editorial editorial = new Editorial();
-//			editorial.setNombre("Anaya");
+			Editorial editorial = new Editorial();
+			editorial.setNombre("Anaya");
 //			ServiceLocator.getEditorialService().crearEditorial(editorial.toItem());
 //
-//			editorial.setCodigo(1);
+			editorial.setCodigo(1);
 //			
 //			ServiceLocator.getEditorialService().actualizarEditorial(editorial.toItem());
 //			
@@ -168,21 +177,21 @@ public class Main_HQL {
 //				System.out.println(e.getNombre());
 //			}
 //			
-//			ObservableSet<Autor> autores = FXCollections.observableSet(new HashSet<Autor>());  
-//			
-//			Autor autor1 = new Autor();
-//			autor1.setNombre("Gustavo Adolfo Béquer");
+			ObservableSet<Autor> autores = FXCollections.observableSet(new HashSet<Autor>());  
+			
+			Autor autor1 = new Autor();
+			autor1.setNombre("Gustavo Adolfo Béquer");
 //			ServiceLocator.getAutorService().crearAutor(autor1.toItem());
-//			autor1.setCodigo(1);
-//			
-//			Autor autor2 = new Autor();
-//			autor2.setNombre("Miguel de Cervantes");
+			autor1.setCodigo(1);
+			
+			Autor autor2 = new Autor();
+			autor2.setNombre("Miguel de Cervantes");
 //			ServiceLocator.getAutorService().crearAutor(autor2.toItem());
-//			autor2.setCodigo(2);
-//
-//			autores.add(autor1);
-//			autores.add(autor2);
-//			
+			autor2.setCodigo(2);
+
+			autores.add(autor1);
+			autores.add(autor2);
+			
 //			List<AutorItem> autorItems = ServiceLocator.getAutorService().listarAutores();
 //			List<Autor> autoresConsulta = new ArrayList<Autor>();
 //			for (AutorItem a : autorItems) {
@@ -191,29 +200,29 @@ public class Main_HQL {
 //			for (Autor autor : autoresConsulta) {
 //				System.out.println(autor.getNombre());
 //			}
-//
-//			Libro libro1 = new Libro();
-//			libro1.setAutores(autores);
-//			libro1.setEditorial(editorial);
-//			libro1.setAnioPublicacion(2016);
-//			libro1.setISBN("111111111111");
-//			libro1.setTitulo("Don Quijote de la Mancha");
-//
+
+			Libro libro1 = new Libro();
+			libro1.setAutores(autores);
+			libro1.setEditorial(editorial);
+			libro1.setAnioPublicacion(2016);
+			libro1.setISBN("111111111111");
+			libro1.setTitulo("Don Quijote de la Mancha");
+
 //			ServiceLocator.getLibroService().crearLibro(libro1.toItem());			
-//
-//			Libro libro2 = new Libro();
-//			libro2.setAutores(autores);
-//			libro2.setEditorial(editorial);
-//			libro2.setAnioPublicacion(1990);
-//			libro2.setISBN("2222222222222");
-//			libro2.setTitulo("Crónicas de una muerte anunciada");
+
+			Libro libro2 = new Libro();
+			libro2.setAutores(autores);
+			libro2.setEditorial(editorial);
+			libro2.setAnioPublicacion(1990);
+			libro2.setISBN("2222222222222");
+			libro2.setTitulo("Crónicas de una muerte anunciada");
 
 //			ServiceLocator.getLibroService().crearLibro(libro2.toItem());			
-//
-//			ObservableList<Libro> libros = FXCollections.observableArrayList(new ArrayList<Libro>());
-//			libros.add(libro1);
-//			libros.add(libro2);
-//			
+
+			ObservableSet<Libro> libros = FXCollections.observableSet();
+			libros.add(libro1);
+			libros.add(libro2);
+			
 //			List<LibroItem> libroItems = ServiceLocator.getLibroService().listarLibros();
 //			
 //			List<LibroItem> libroItemsAutor = ServiceLocator.getLibroService().librosPorAutor(autor1.toItem());
@@ -233,37 +242,37 @@ public class Main_HQL {
 //			for (Libro libro : lib2) {
 //				System.out.println(libro.getTitulo());
 //			}
-//
-//			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-//
-//			Prestamo prestamo = new Prestamo();
-//			try {
-//				prestamo.setFechaPrestamo(format.parse("01/03/2016"));
-//			} catch (ParseException e1) {
-//				e1.printStackTrace();
-//			}
-//			
-//			Rol r = new Rol();
-//			r.setTipo("Lector");
+
+			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+			Prestamo prestamo = new Prestamo();
+			try {
+				prestamo.setFechaPrestamo(format.parse("01/03/2016"));
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			
+			Rol r = new Rol();
+			r.setTipo("Lector");
 //			ServiceLocator.getRolService().crearRol(r.toItem());
-//			r.setCodigo(2);
-//			
-//			Usuario u2 = new Usuario();
-//			u2.setNombre("lector");
-//			u2.setUsuario("lector2");
-//			u2.setPassword("lector");
-//			u2.setRol(r);
-//			
+			r.setCodigo(1);
+			
+			Usuario u2 = new Usuario();
+			u2.setNombre("lector");
+			u2.setUsuario("lector2");
+			u2.setPassword("lector");
+			u2.setRol(rolAdmin);
+			
 //			ServiceLocator.getUsuarioService().crearUsuario(u2.toItem());
-//		
-//			u2.setCodigo(3);
+		
+			u2.setCodigo(1);
+			
+			prestamo.setUsuario(u2);
+			prestamo.setLibro(libros);
+
+			ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
 //			
-//			prestamo.setUsuario(u2);
-//			prestamo.setLibro(libros);
-//
-//			ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
-//			
-//			prestamo.setCodigo(2);
+//			prestamo.setCodigo(1);
 //			
 //			List<PrestamoItem> prestItems = ServiceLocator.getPrestamoService().listarPrestamos();
 //			List<Prestamo> prestamos = new ArrayList<Prestamo>();
@@ -301,7 +310,7 @@ public class Main_HQL {
 //			}
 //			sancion.setLibro(libro1);
 //			sancion.setPrestamo(prestamo);
-
+//
 //			List<SancionItem> sancionItems = ServiceLocator.getSancionService().listarSanciones();
 //			List<Sancion> sanciones = new ArrayList<Sancion>();
 //			for (SancionItem s : sancionItems) {

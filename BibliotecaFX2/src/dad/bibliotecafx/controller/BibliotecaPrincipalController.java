@@ -217,6 +217,7 @@ public class BibliotecaPrincipalController {
 	private void onAltaUsuario(ActionEvent e) {
 		try {
 			this.main.showNuevoUsuarioScene();
+			usuariosTable.setItems(main.getUsuariosData());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -224,10 +225,21 @@ public class BibliotecaPrincipalController {
 
 	@FXML
 	private void onModificarUsuario(ActionEvent e) {
-		try {
-			this.main.showModificarUsuarioScene();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		int usuariosSeleccionados = usuariosTable.getSelectionModel().getSelectedItems().size();
+		
+		if(usuariosSeleccionados == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Modificar usuario");
+//			alert.setHeaderText("Look, a Warning Dialog");
+			alert.setContentText("Debe seleccionar el usuario que quiere modificar");
+			alert.showAndWait();
+		} else if(usuariosSeleccionados == 1) {
+			try {
+				this.main.showModificarUsuarioScene(usuariosTable.getSelectionModel().getSelectedItem());
+				usuariosTable.setItems(main.getUsuariosData());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -244,15 +256,13 @@ public class BibliotecaPrincipalController {
 		} else if(usuariosSeleccionados == 1) {
 			try {
 				ServiceLocator.getUsuarioService().eliminarUsuario(usuariosTable.getSelectionModel().getSelectedItem().toItem());
-				main.getUsuariosData().remove(usuariosTable.getSelectionModel().getSelectedItem());
+				usuariosTable.setItems(main.getUsuariosData());
+				
+				//Esta línea no funciona porque estoy actualizando los datos al llamar a getUsuariosData y ya no encuentra el q elimine, por eso puse la anterior:
+//				main.getUsuariosData().remove(usuariosTable.getSelectionModel().getSelectedItem());
 			} catch (ServiceException e1) {
 				e1.printStackTrace();
 			}
-		} else {
-//			for(int i;i<prestamosSeleccionados;i++) {
-//				//para eliminar todos los prestamos;
-//				ServiceLocator.getPrestamoService().eliminarPrestamo(prestamosTable.getSelectionModel().getSelectedIndices().get(i));
-//			}	
 		}
 	}
 
@@ -260,11 +270,12 @@ public class BibliotecaPrincipalController {
 	private void onNuevoPrestamo(ActionEvent e) {
 		try {
 			this.main.showNuevoPrestamoScene();
+			prestamosTable.setItems(main.getPrestamosData());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-
+	
 	@FXML
 	private void onEliminarPrestamo(ActionEvent e) {
 		int prestamosSeleccionados = prestamosTable.getSelectionModel().getSelectedItems().size();
@@ -278,15 +289,12 @@ public class BibliotecaPrincipalController {
 		} else if(prestamosSeleccionados == 1) {
 			try {
 				ServiceLocator.getPrestamoService().eliminarPrestamo(prestamosTable.getSelectionModel().getSelectedItem().toItem());
-				main.getPrestamosData().remove(prestamosTable.getSelectionModel().getSelectedItem());
+				prestamosTable.setItems(main.getPrestamosData());
+				
+//				main.getPrestamosData().remove(prestamosTable.getSelectionModel().getSelectedItem());
 			} catch (ServiceException e1) {
 				e1.printStackTrace();
 			}
-		} else {
-//			for(int i;i<prestamosSeleccionados;i++) {
-//				//para eliminar todos los prestamos;
-//				ServiceLocator.getPrestamoService().eliminarPrestamo(prestamosTable.getSelectionModel().getSelectedIndices().get(i));
-//			}
 		}
 	}
 

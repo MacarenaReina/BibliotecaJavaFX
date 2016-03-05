@@ -2,7 +2,9 @@ package dad.bibliotecafx.service.items;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dad.bibliotecafx.modelo.Libro;
 import dad.bibliotecafx.modelo.Prestamo;
@@ -10,11 +12,12 @@ import dad.bibliotecafx.service.entidades.LibroEntity;
 import dad.bibliotecafx.service.entidades.PrestamoEntity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 public class PrestamoItem {
 
 	private Long codigo;
-	private List<LibroItem> libro = new ArrayList<LibroItem>();
+	private Set<LibroItem> libro = new HashSet<LibroItem>();
 	private UsuarioItem usuario;
 	private Date fechaPrestamo;
 	private Date fechaDevolucion;
@@ -27,11 +30,11 @@ public class PrestamoItem {
 		this.codigo = codigo;
 	}
 
-	public List<LibroItem> getLibro() {
+	public Set<LibroItem> getLibro() {
 		return libro;
 	}
 
-	public void setLibro(List<LibroItem> libro) {
+	public void setLibro(Set<LibroItem> libro) {
 		this.libro = libro;
 	}
 
@@ -65,7 +68,7 @@ public class PrestamoItem {
 		pe.setFechaDevolucion(getFechaDevolucion());
 		pe.setFechaPrestamo(getFechaPrestamo());
 		pe.setUsuario(getUsuario().toEntity());
-		List<LibroEntity> libros = new ArrayList<LibroEntity>();
+		Set<LibroEntity> libros = new HashSet<LibroEntity>();
 		for (LibroItem libro : getLibro()) {
 			libros.add(libro.toEntity());
 		}
@@ -79,7 +82,7 @@ public class PrestamoItem {
 		pe.setFechaDevolucion(getFechaDevolucion());
 		pe.setFechaPrestamo(getFechaPrestamo());
 		pe.setUsuario(getUsuario().toModel());
-		ObservableList<Libro> libros = FXCollections.observableArrayList(new ArrayList<Libro>());
+		ObservableSet<Libro> libros = FXCollections.observableSet(new HashSet<Libro>());
 		for (LibroItem libro : getLibro()) {
 			libros.add(libro.toModel());
 		}

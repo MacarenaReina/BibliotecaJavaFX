@@ -2,22 +2,26 @@ package dad.bibliotecafx.modelo;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dad.bibliotecafx.service.items.LibroItem;
 import dad.bibliotecafx.service.items.PrestamoItem;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
 import javafx.collections.FXCollections;
 
 public class Prestamo {
 	
 	private final LongProperty codigo = new SimpleLongProperty(this, "codigo");
-	private final ListProperty<Libro> libro = new SimpleListProperty<Libro>(FXCollections.observableArrayList(new ArrayList<Libro>()));
+	private final SetProperty<Libro> libro = new SimpleSetProperty<Libro>(FXCollections.observableSet(new HashSet<Libro>()));
 	private final ObjectProperty<Usuario> usuario = new SimpleObjectProperty<Usuario>(this, "usuario");
 	private final ObjectProperty<Date> fechaPrestamo = new SimpleObjectProperty<Date>(this, "fechaPrestamo");
 	private final ObjectProperty<Date> fechaDevolucion = new SimpleObjectProperty<Date>(this, "fechaDevolucion");
@@ -34,15 +38,15 @@ public class Prestamo {
 		this.codigoProperty().set(codigo);
 	}
 
-	public final ListProperty<Libro> libroProperty() {
+	public final SetProperty<Libro> libroProperty() {
 		return this.libro;
 	}	
 
-	public final javafx.collections.ObservableList<dad.bibliotecafx.modelo.Libro> getLibro() {
+	public final javafx.collections.ObservableSet<dad.bibliotecafx.modelo.Libro> getLibro() {
 		return this.libroProperty().get();
 	}	
 
-	public final void setLibro(final javafx.collections.ObservableList<dad.bibliotecafx.modelo.Libro> libro) {
+	public final void setLibro(final javafx.collections.ObservableSet<dad.bibliotecafx.modelo.Libro> libro) {
 		this.libroProperty().set(libro);
 	}	
 
@@ -113,7 +117,7 @@ public class Prestamo {
 		p.setFechaDevolucion(getFechaDevolucion());
 		p.setFechaPrestamo(getFechaPrestamo());
 		p.setUsuario(getUsuario().toItem());
-		List<LibroItem> libros = new ArrayList<LibroItem>();
+		Set<LibroItem> libros = new HashSet<LibroItem>();
 		for (Libro libro : getLibro()) {
 			libros.add(libro.toItem());
 		}

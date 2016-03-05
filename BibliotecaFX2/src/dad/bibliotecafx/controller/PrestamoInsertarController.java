@@ -1,12 +1,20 @@
 package dad.bibliotecafx.controller;
 
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.modelo.Libro;
 import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -80,6 +88,10 @@ public class PrestamoInsertarController {
 		int usuariosSeleccionados = usuariosPrestTable.getSelectionModel().getSelectedItems().size();
 		int librosSeleccionados = librosPrestTable.getSelectionModel().getSelectedItems().size();
 		
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(System.currentTimeMillis());
+		Date fecha = cal.getTime();
+		
 		if(usuariosPrestTable.isVisible()) {
 			if(usuariosSeleccionados==0) {
 				Alert alert = new Alert(AlertType.WARNING);
@@ -113,10 +125,12 @@ public class PrestamoInsertarController {
 				usuariosPrestTable.setVisible(false);
 				librosPrestTable.setVisible(false);		
 				
+				
+				
 				prestamosTextArea.setText("Usuario: "+usuariosPrestTable.getSelectionModel().getSelectedItem().getUsuario()+"\n"
 						+ "Libro: "+librosPrestTable.getSelectionModel().getSelectedItem().getTitulo()+"\n"
 						+ "Autor: "+librosPrestTable.getSelectionModel().getSelectedItem().getAutores().toString()+"\n"
-						+ "Fecha del préstamo: ");
+						+ "Fecha del préstamo: " + fecha);
 				
 				prestamoScrollPane.setVisible(true);
 				prestamosTextArea.setVisible(true);
@@ -126,6 +140,10 @@ public class PrestamoInsertarController {
 			Prestamo prestamo = new Prestamo();
 			
 			prestamo.setUsuario(usuariosPrestTable.getSelectionModel().getSelectedItem());
+			ObservableSet<Libro> libros = FXCollections.observableSet();
+			libros.add(librosPrestTable.getSelectionModel().getSelectedItem());
+			prestamo.setLibro(libros);			
+			prestamo.setFechaPrestamo(fecha);
 			
 			
 			//guardar el prestamo y cerrar la ventana

@@ -101,6 +101,18 @@ public class Main extends Application {
 		});
 	}
 
+	private void actualizarLibros() {
+		librosData = FXCollections.observableArrayList();
+		try {
+			List<LibroItem> librosList = ServiceLocator.getLibroService().listarLibros();
+			for (LibroItem libroItem : librosList) {
+				librosData.add(libroItem.toModel());
+			}
+		} catch (ServiceException e1) {
+			e1.printStackTrace();
+		}
+	}
+
 	private void showBibliotecaScene() throws IOException {
 		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaUI.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
@@ -123,6 +135,7 @@ public class Main extends Application {
 		stage.setHeight(300);
 		stage.setResizable(false);
 		
+		
 		URL url = getClass().getResource("views/BibliotecaNuevoUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
@@ -134,15 +147,16 @@ public class Main extends Application {
 		controller.setRolesData(getRolesData());
 		
 		stage.setScene(scene);
-		stage.show();
+		stage.showAndWait();
 	}
 	
-	public void showModificarUsuarioScene() throws IOException {
+	public void showModificarUsuarioScene(Usuario usuario) throws IOException {
 		stage = new Stage();
 		stage.setTitle("Modificar usuario");
-		stage.setWidth(300);
-		stage.setHeight(225);
+		stage.setWidth(400);
+		stage.setHeight(300);
 		stage.setResizable(false);
+		
 
 		URL url = getClass().getResource("views/BibliotecaModificarUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
@@ -152,9 +166,11 @@ public class Main extends Application {
 		
 		UsuarioModificarController controller = ((UsuarioModificarController) loader.getController());
 		controller.setMain(this);
+		controller.setRolesData(getRolesData());
+		controller.setUsuario(usuario);
 		
 		stage.setScene(scene);
-		stage.show();
+		stage.showAndWait();
 	}
 	
 	public void showNuevoPrestamoScene() throws IOException {
@@ -174,7 +190,7 @@ public class Main extends Application {
 		controller.setMain(this);
 		
 		stage.setScene(scene);
-		stage.show();
+		stage.showAndWait();
 	}
 	
 //	public Stage getPrimaryStage() {
@@ -182,10 +198,12 @@ public class Main extends Application {
 //   }
 	
 	public ObservableList<Usuario> getUsuariosData() {
+		actualizarUsuarios();
 		return usuariosData;
 	}
 	
 	public ObservableList<Libro> getLibrosData() {
+		actualizarLibros();
 		return librosData;
 	}
 	
@@ -195,8 +213,33 @@ public class Main extends Application {
 	}
 	
 	public ObservableList<Prestamo> getPrestamosData() {
+		actualizarPrestamos();
 		return prestamosData;
-	}	
+	}
+	
+	private void actualizarUsuarios() {
+		usuariosData = FXCollections.observableArrayList();
+		try {
+			List<UsuarioItem> usuariosList = ServiceLocator.getUsuarioService().listarTodosUsuarios();
+			for (UsuarioItem usuarioItem : usuariosList) {
+				usuariosData.add(usuarioItem.toModel());
+			}
+		} catch (ServiceException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void actualizarPrestamos() {
+		prestamosData = FXCollections.observableArrayList();
+		try {
+			List<PrestamoItem> prestamosList = ServiceLocator.getPrestamoService().listarPrestamos();
+			for (PrestamoItem prestamoItem : prestamosList) {
+				prestamosData.add(prestamoItem.toModel());
+			}
+		} catch (ServiceException e1) {
+			e1.printStackTrace();
+		}
+	}
 	
 	private void actualizarRoles() {
 		rolesData = FXCollections.observableArrayList();
@@ -209,11 +252,11 @@ public class Main extends Application {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	public Stage getStage() {
 		return stage;
 	}
-
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
