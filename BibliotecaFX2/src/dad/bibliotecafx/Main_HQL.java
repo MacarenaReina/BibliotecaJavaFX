@@ -10,6 +10,7 @@ import java.util.List;
 //import java.util.List;
 
 import dad.bibliotecafx.db.DataBase;
+import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
@@ -249,12 +250,12 @@ public class Main_HQL {
 //			
 //			Usuario u2 = new Usuario();
 //			u2.setNombre("lector");
-//			u2.setUsuario("lector");
+//			u2.setUsuario("lector2");
 //			u2.setPassword("lector");
 //			u2.setRol(r);
 //			
 //			ServiceLocator.getUsuarioService().crearUsuario(u2.toItem());
-//			
+//		
 //			u2.setCodigo(3);
 //			
 //			prestamo.setUsuario(u2);

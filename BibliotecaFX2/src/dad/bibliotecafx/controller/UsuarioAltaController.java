@@ -104,7 +104,6 @@ public class UsuarioAltaController {
 	
 	public void setRolesData(ObservableList<Rol> roles){
 		rolUsuComboBox.setItems(roles);
-
 	}
 	
 	public void setMain(Main main) {

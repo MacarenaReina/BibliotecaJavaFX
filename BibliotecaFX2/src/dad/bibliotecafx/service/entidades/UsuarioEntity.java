@@ -114,7 +114,8 @@ public class UsuarioEntity implements Serializable {
 	}
 
 	public UsuarioItem toItem(){
-		UsuarioItem u = new UsuarioItem();		
+		UsuarioItem u = new UsuarioItem();	
+		u.setUsuario(getUsuario());
 		u.setCodigo(getCodigo());
 		u.setNombre(getNombre());
 		u.setPassword(getPassword());	

@@ -9,7 +9,10 @@ import dad.bibliotecafx.controller.PrestamoInsertarController;
 import dad.bibliotecafx.controller.UsuarioAltaController;
 import dad.bibliotecafx.controller.UsuarioModificarController;
 import dad.bibliotecafx.db.DataBase;
+import dad.bibliotecafx.modelo.Libro;
+import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.modelo.Rol;
+import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
 import dad.bibliotecafx.service.items.LibroItem;
@@ -19,9 +22,11 @@ import dad.bibliotecafx.service.items.UsuarioItem;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 public class Main extends Application {
@@ -30,22 +35,50 @@ public class Main extends Application {
 	
 	private Stage primaryStage;
 	
-	private ObservableList<LibroItem> librosData;
-	private ObservableList<UsuarioItem> usuariosData;
-	private ObservableList<PrestamoItem> prestamosData;
-	
+	private ObservableList<Libro> librosData;
+	private ObservableList<Usuario> usuariosData;
+	private ObservableList<Prestamo> prestamosData;	
 	private ObservableList<Rol> rolesData;
 
 	@Override
 	public void start(Stage primaryStage) {
 		DataBase.connect();
 		
-//		try {
-//			List<PrestamoItem> prestamosList = ServiceLocator.getPrestamoService().listarPrestamos();
-//			prestamosData = FXCollections.observableArrayList(prestamosList);
-//		} catch (ServiceException e1) {
-//			e1.printStackTrace();
-//		}
+		usuariosData = FXCollections.observableArrayList();
+		try {
+			List<UsuarioItem> usuaiosItem = ServiceLocator.getUsuarioService().listarTodosUsuarios();
+			for (UsuarioItem usuarioItem : usuaiosItem) {
+				usuariosData.add(usuarioItem.toModel());
+			}
+		} catch (ServiceException e3) {
+			// TODO Auto-generated catch block
+			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
+			e3.printStackTrace();
+		}
+		
+		prestamosData = FXCollections.observableArrayList();
+		try {
+			List<PrestamoItem> prestamosList = ServiceLocator.getPrestamoService().listarPrestamos();
+			for (PrestamoItem prestamoItem : prestamosList) {
+				prestamosData.add(prestamoItem.toModel());
+			}
+		} catch (ServiceException e1) {
+			// TODO Auto-generated catch block
+			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
+			e1.printStackTrace();
+		}
+		
+		librosData = FXCollections.observableArrayList();
+		try {
+			List<LibroItem> librosLis = ServiceLocator.getLibroService().listarLibros();
+			for (LibroItem libroItem : librosLis) {
+				librosData.add(libroItem.toModel());
+			}
+		} catch (ServiceException e2) {
+			// TODO Auto-generated catch block
+			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
+			e2.printStackTrace();
+		}
 		
 		rolesData = FXCollections.observableArrayList();
 		try {
@@ -54,6 +87,8 @@ public class Main extends Application {
 				rolesData.add(rolItem.toModel());
 			}
 		} catch (ServiceException e1) {
+			// TODO Auto-generated catch block
+			//Poner OptionPane que indique que ha ocurrido un error al consultar la Base de Datos
 			e1.printStackTrace();
 		}
 		
@@ -93,14 +128,26 @@ public class Main extends Application {
 			//TODO: Mostrar mensaje, no ha sido posible iniciar la aplicación...
 			e.printStackTrace();
 		}
+		
+		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		    @Override
+		    public void handle(WindowEvent event) {
+		    	DataBase.disconnect();
+		    }
+		});
 	}
 	
 	private void showBibliotecaScene() throws IOException{
-		URL url = getClass().getResource("/dad/bibliotecafx/docs/BibliotecaUI.fxml");
+		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaUI.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
 		
-		Scene scene = new Scene(loader.load());
-		((BibliotecaPruebaController) loader.getController()).setMain(this);
+		Scene scene = new Scene(loader.load());		
+		
+		BibliotecaPruebaController controller = ((BibliotecaPruebaController) loader.getController());
+		controller.setMain(this);
+		controller.setFilterLibros(getLibrosData());
+		controller.setFilterUsuarios(getUsuariosData());
+		controller.setFilterPrestamos(getPrestamosData());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -112,7 +159,7 @@ public class Main extends Application {
 		stage.setHeight(225);
 		stage.setResizable(false);
 		
-		URL url = getClass().getResource("docs/BibliotecaNuevoUsuario.fxml");
+		URL url = getClass().getResource("views/BibliotecaNuevoUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
@@ -123,7 +170,7 @@ public class Main extends Application {
 		controller.setRolesData(getRolesData());
 		
 		stage.setScene(scene);
-		stage.show();
+		stage.showAndWait();
 	}
 	
 	public void showModificarUsuarioScene() throws IOException {
@@ -133,7 +180,7 @@ public class Main extends Application {
 		stage.setHeight(225);
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("docs/BibliotecaModificarUsuario.fxml");
+		URL url = getClass().getResource("views/BibliotecaModificarUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
@@ -142,7 +189,7 @@ public class Main extends Application {
 		((UsuarioModificarController) loader.getController()).setMain(this);
 		
 		stage.setScene(scene);
-		stage.show();
+		stage.showAndWait();
 	}
 	
 	public void showNuevoPrestamoScene() throws IOException {
@@ -152,7 +199,7 @@ public class Main extends Application {
 		stage.setHeight(600);
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("docs/BibliotecaNuevoPrestamo.fxml");
+		URL url = getClass().getResource("views/BibliotecaNuevoPrestamo.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
@@ -161,18 +208,18 @@ public class Main extends Application {
 		((PrestamoInsertarController) loader.getController()).setMain(this);
 		
 		stage.setScene(scene);
-		stage.show();
+		stage.showAndWait();
 	}
 	
 //	public Stage getPrimaryStage() {
 //        return primaryStage;
 //   }
 	
-	public ObservableList<UsuarioItem> getUsuariosData() {
+	public ObservableList<Usuario> getUsuariosData() {
 		return usuariosData;
 	}
 	
-	public ObservableList<LibroItem> getLibrosData() {
+	public ObservableList<Libro> getLibrosData() {
 		return librosData;
 	}
 	
@@ -180,7 +227,7 @@ public class Main extends Application {
 		return rolesData;
 	}
 	
-	public ObservableList<PrestamoItem> getPrestamosData() {
+	public ObservableList<Prestamo> getPrestamosData() {
 		return prestamosData;
 	}
 	

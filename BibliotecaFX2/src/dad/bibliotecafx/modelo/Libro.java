@@ -123,5 +123,10 @@ public class Libro {
 		l.setAutores(autores);
 		return l;		
 	}
+	
+	@Override
+	public String toString() {
+		return titulo.get();
+	}
 
 }

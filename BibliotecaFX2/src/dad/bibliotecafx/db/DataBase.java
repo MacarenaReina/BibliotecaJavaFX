@@ -26,4 +26,16 @@ public class DataBase {
 		getSession().clear();
 	}
 	
+	public static void disconnect(){
+		if(getSession().isConnected()){
+			System.out.println("Desconectando");
+			getSession().disconnect();	
+		}
+		if(getSession().isOpen()){
+			getSession().close();
+			System.out.println("Cerrando");
+		}		
+		System.out.println("listo");			
+	}
+	
 }

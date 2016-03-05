@@ -2,6 +2,7 @@ package dad.bibliotecafx.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hibernate.Query;
 
 import dad.bibliotecafx.db.DataBase;
@@ -76,4 +77,14 @@ public class LibroService implements ILibroService {
 		DataBase.commit();
 		return libros;
 	}
+
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public List<LibroItem> buscarLibro(String criterio) throws ServiceException {
+//		DataBase.begin();
+//		Query consultaLibros = DataBase.getSession().createQuery("FROM LibroEntity WHERE titulo = :titulo").setString("titulo", criterio);
+//		List<LibroItem> resultado = consultaLibros.list();
+//		DataBase.commit();
+//		return resultado;	
+//	}
 }

@@ -29,10 +29,20 @@ public class UsuarioService implements IUsuarioService {
 	}
 
 	@Override
-	public void crearUsuario(UsuarioItem usuario) throws ServiceException {
+	public boolean crearUsuario(UsuarioItem usuario) throws ServiceException {
+		boolean yaExiste = false;
 		DataBase.begin();
-		DataBase.getSession().save(usuario.toEntity());
+		Long registros;
+		registros = (Long)(DataBase.getSession().createQuery("SELECT COUNT (*) FROM UsuarioEntity WHERE usuario = :usuario").setString("usuario", usuario.getUsuario()).uniqueResult());
 		DataBase.commit();
+		if(registros == 0){
+			DataBase.begin();
+			DataBase.getSession().save(usuario.toEntity());
+			DataBase.commit();
+		} else{
+			yaExiste = true;
+		}
+		return yaExiste;
 	}
 
 	@Override

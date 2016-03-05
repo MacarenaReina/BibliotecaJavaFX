@@ -46,6 +46,7 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                                  <columns>
+                                <TableColumn fx:id="isbnTableColumn" prefWidth="75.0" text="ISBN" /> 
                                     <TableColumn fx:id="tituloTableColumn" prefWidth="75.0" text="Título" />
                                     <TableColumn fx:id="autorTableColumn" prefWidth="75.0" text="Autor" />
                                     <TableColumn fx:id="anioTableColumn" prefWidth="75.0" text="Año de publicacion" />
