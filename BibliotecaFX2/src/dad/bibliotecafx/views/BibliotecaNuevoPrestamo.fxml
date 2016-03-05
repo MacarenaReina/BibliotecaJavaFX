@@ -51,4 +51,7 @@
          </children>
       </StackPane>
    </center>
+   <top>
+      <DatePicker fx:id="datePicker" BorderPane.alignment="CENTER" />
+   </top>
 </BorderPane>

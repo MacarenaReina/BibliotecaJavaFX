@@ -1,10 +1,12 @@
 package dad.bibliotecafx.controller;
 
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.modelo.Libro;
@@ -18,14 +20,16 @@ import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
-import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class PrestamoInsertarController {
@@ -60,14 +64,13 @@ public class PrestamoInsertarController {
 	@FXML
 	private Button siguientePrestButton, atrasPrestButton;
 	
-	
-	
-	public PrestamoInsertarController() {
-		
-	}
+	@FXML
+	private DatePicker datePicker;
 	
 	@FXML
 	private void initialize() {
+		datePicker.setValue(LocalDate.now());
+		librosPrestTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		
 		if(usuariosPrestTable.isVisible()) {
 			atrasPrestButton.setDisable(true);
@@ -87,12 +90,17 @@ public class PrestamoInsertarController {
 	private void onSiguientePrestButton() {
 		int usuariosSeleccionados = usuariosPrestTable.getSelectionModel().getSelectedItems().size();
 		int librosSeleccionados = librosPrestTable.getSelectionModel().getSelectedItems().size();
+		ObservableList<Libro> librosSeleccionadosList = FXCollections.observableArrayList();
+		ObservableSet<Libro> libros = FXCollections.observableSet();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis());
-		Date fecha = cal.getTime();
+//		Calendar cal = Calendar.getInstance();
+//		cal.setTimeInMillis(System.currentTimeMillis());
+//		Date fecha = cal.getTime();
 		
 		if(usuariosPrestTable.isVisible()) {
+				
 			if(usuariosSeleccionados==0) {
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Insertar préstamo");
@@ -122,38 +130,53 @@ public class PrestamoInsertarController {
 	
 				alert.showAndWait();
 			} else {
+				
 				usuariosPrestTable.setVisible(false);
 				librosPrestTable.setVisible(false);		
-				
-				
-				
 				prestamosTextArea.setText("Usuario: "+usuariosPrestTable.getSelectionModel().getSelectedItem().getUsuario()+"\n"
-						+ "Libro: "+librosPrestTable.getSelectionModel().getSelectedItem().getTitulo()+"\n"
-						+ "Autor: "+librosPrestTable.getSelectionModel().getSelectedItem().getAutores().toString()+"\n"
-						+ "Fecha del préstamo: " + fecha);
+						+ "Libro: "+ librosPrestTable.getSelectionModel().getSelectedItems() +"\n"
+						+ "Autor: "+ librosPrestTable.getSelectionModel().getSelectedItem().getAutores().toString()+"\n"
+						+ "Fecha del préstamo: " + datePicker.getValue().format(formatter));
 				
 				prestamoScrollPane.setVisible(true);
 				prestamosTextArea.setVisible(true);
 				siguientePrestButton.setText("Finalizar");
 			}
 		} else if(prestamoScrollPane.isVisible()) {
-			Prestamo prestamo = new Prestamo();
 			
-			prestamo.setUsuario(usuariosPrestTable.getSelectionModel().getSelectedItem());
-			ObservableSet<Libro> libros = FXCollections.observableSet();
-			libros.add(librosPrestTable.getSelectionModel().getSelectedItem());
-			prestamo.setLibro(libros);			
-			prestamo.setFechaPrestamo(fecha);
-			
-			
-			//guardar el prestamo y cerrar la ventana
-			try {
-				ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
-				
-				main.getStage().close();
-			} catch (ServiceException e) {
-				e.printStackTrace();
+			for (Libro libro : libros) {
+				System.out.println(libro.getTitulo());
 			}
+			
+				Prestamo prestamo = new Prestamo();
+				
+				prestamo.setUsuario(usuariosPrestTable.getSelectionModel().getSelectedItem());
+				System.out.println(prestamo.getUsuario().getNombre());
+				for (Libro libro : librosPrestTable.getSelectionModel().getSelectedItems()) {
+					libros.add(libro);
+				}				
+				prestamo.setLibro(libros);		
+				
+				
+				String formattedValue = (datePicker.getValue()).format(formatter);
+				try {
+					prestamo.setFechaPrestamo(sdf.parse(formattedValue));
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				prestamo.getFechaPrestamo();
+				
+				//guardar el prestamo y cerrar la ventana
+				try {
+					ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
+					
+					main.getStage().close();
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			
+			
 			
 		}
 		

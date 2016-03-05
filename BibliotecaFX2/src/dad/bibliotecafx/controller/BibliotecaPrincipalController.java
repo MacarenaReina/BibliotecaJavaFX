@@ -88,6 +88,8 @@ public class BibliotecaPrincipalController {
 	private TableColumn<Prestamo, Usuario> usuarioPresTableColumn;
 	@FXML
 	private TableColumn<Prestamo, Date> fechainiPresTableColumn;
+	@FXML
+	private TableColumn<Prestamo, Date> fechadevolPresTableColumn;
 
 	// INSERTAR USUARIO
 	// @FXML
@@ -161,7 +163,7 @@ public class BibliotecaPrincipalController {
 		libroPresTableColumn.setCellValueFactory(new PropertyValueFactory<Prestamo, Libro>("libro"));
 		usuarioPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().usuarioProperty());
 		fechainiPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaPrestamoProperty());
-
+		fechadevolPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaDevolucionProperty());
 		
 
 		// libroText.textProperty().addListener((observable, oldValue, newValue)
@@ -404,6 +406,28 @@ public class BibliotecaPrincipalController {
 	public void salir(){
 		DataBase.disconnect();
 		main.getPrimaryStage().close();
+	}
+	
+	@FXML
+	public void onEditarPrestamoButton(){
+int prestamosSeleccionados = prestamosTable.getSelectionModel().getSelectedItems().size();
+		
+		if(prestamosSeleccionados == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Eliminar préstamo");
+//			alert.setHeaderText("Look, a Warning Dialog");
+			alert.setContentText("Debe seleccionar al menos un préstamo");
+			alert.showAndWait();
+		} else if(prestamosSeleccionados == 1) {
+			try {
+				ServiceLocator.getPrestamoService().eliminarPrestamo(prestamosTable.getSelectionModel().getSelectedItem().toItem());
+				prestamosTable.setItems(main.getPrestamosData());
+				
+//				main.getPrestamosData().remove(prestamosTable.getSelectionModel().getSelectedItem());
+			} catch (ServiceException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 }
