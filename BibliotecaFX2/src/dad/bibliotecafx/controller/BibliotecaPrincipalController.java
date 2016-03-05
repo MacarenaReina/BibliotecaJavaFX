@@ -1,10 +1,10 @@
 package dad.bibliotecafx.controller;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import dad.bibliotecafx.Main;
+import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Autor;
 import dad.bibliotecafx.modelo.Libro;
 import dad.bibliotecafx.modelo.Prestamo;
@@ -12,8 +12,6 @@ import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -390,6 +388,22 @@ public class BibliotecaPrincipalController {
 		sortedDataPrestamos = new SortedList<>(filtroPrestamos);
 		sortedDataPrestamos.comparatorProperty().bind(prestamosTable.comparatorProperty());
 		prestamosTable.setItems(sortedDataPrestamos);
+	}
+	
+	@FXML
+	public void gestionRoles(){
+		
+	}
+	
+	@FXML
+	public void gestionConfiguraciones(){
+		
+	}
+	
+	@FXML
+	public void salir(){
+		DataBase.disconnect();
+		main.getPrimaryStage().close();
 	}
 
 }

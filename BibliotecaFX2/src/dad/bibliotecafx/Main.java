@@ -257,6 +257,10 @@ public class Main extends Application {
 		return stage;
 	}
 	
+	public Stage getPrimaryStage() {
+		return this.primaryStage;
+	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}

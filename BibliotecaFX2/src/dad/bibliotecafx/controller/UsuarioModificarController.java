@@ -77,8 +77,8 @@ public class UsuarioModificarController {
 			nombreModifUsuText.setText(usuarioArray[0]);
 		}
 		if(usuarioArray.length >= 2) {
-			for(int i=1;i<usuarioArray.length;i++) {
-				apellidosModifUsuText.setText(usuarioArray[i]+" ");
+			for(int i=1; i< usuarioArray.length; i++) {
+				apellidosModifUsuText.setText(apellidosModifUsuText.getText() + usuarioArray[i]+" ");
 			}
 		}
 		
