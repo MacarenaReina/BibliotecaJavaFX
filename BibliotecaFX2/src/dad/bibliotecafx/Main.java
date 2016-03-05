@@ -123,7 +123,7 @@ public class Main extends Application {
 		stage.setHeight(300);
 		stage.setResizable(false);
 		
-		URL url = getClass().getResource("docs/BibliotecaNuevoUsuario.fxml");
+		URL url = getClass().getResource("views/BibliotecaNuevoUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
@@ -144,7 +144,7 @@ public class Main extends Application {
 		stage.setHeight(225);
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("docs/BibliotecaModificarUsuario.fxml");
+		URL url = getClass().getResource("views/BibliotecaModificarUsuario.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		
@@ -164,7 +164,7 @@ public class Main extends Application {
 		stage.setHeight(600);
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("docs/BibliotecaNuevoPrestamo.fxml");
+		URL url = getClass().getResource("views/BibliotecaNuevoPrestamo.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 		

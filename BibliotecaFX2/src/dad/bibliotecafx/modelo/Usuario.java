@@ -134,5 +134,9 @@ public class Usuario {
 		return u;
 	}
 
+	@Override
+	public String toString() {
+		return nombre.get();
+	}
 
 }
