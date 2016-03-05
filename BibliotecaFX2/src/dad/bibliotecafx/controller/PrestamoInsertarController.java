@@ -3,12 +3,18 @@ package dad.bibliotecafx.controller;
 
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.modelo.Libro;
+import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.modelo.Usuario;
+import dad.bibliotecafx.service.ServiceException;
+import dad.bibliotecafx.service.ServiceLocator;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -54,13 +60,19 @@ public class PrestamoInsertarController {
 	
 	@FXML
 	private void initialize() {
+		
 		if(usuariosPrestTable.isVisible()) {
 			atrasPrestButton.setDisable(true);
 		}
 		
+		nombrePrestTableColum.setCellValueFactory(cellData -> cellData.getValue().usuarioProperty());
+		rolPrestTableColumn.setCellValueFactory(new PropertyValueFactory<Usuario, String>("rol"));
+
+		tituloPrestTableColumn.setCellValueFactory(cellData -> cellData.getValue().tituloProperty());
+		autorPrestTableColumn.setCellValueFactory(new PropertyValueFactory<Libro, String>("autores"));
+		anioPrestTableColumn.setCellValueFactory(new PropertyValueFactory<Libro, Integer>("anioPublicacion"));		
 		
-		
-		
+//		anioPrestTableColumn.setCellValueFactory(cellData -> cellData.getValue().anioPublicacionProperty());
 	}
 	
 	@FXML
@@ -101,15 +113,30 @@ public class PrestamoInsertarController {
 				usuariosPrestTable.setVisible(false);
 				librosPrestTable.setVisible(false);		
 				
-				prestamosTextArea.setText("Usuario: \nLibro: \nAutor: \nFecha del préstamo: ");
+				prestamosTextArea.setText("Usuario: "+usuariosPrestTable.getSelectionModel().getSelectedItem().getUsuario()+"\n"
+						+ "Libro: "+librosPrestTable.getSelectionModel().getSelectedItem().getTitulo()+"\n"
+						+ "Autor: "+librosPrestTable.getSelectionModel().getSelectedItem().getAutores().toString()+"\n"
+						+ "Fecha del préstamo: ");
 				
 				prestamoScrollPane.setVisible(true);
 				prestamosTextArea.setVisible(true);
 				siguientePrestButton.setText("Finalizar");
 			}
 		} else if(prestamoScrollPane.isVisible()) {
+			Prestamo prestamo = new Prestamo();
+			
+			prestamo.setUsuario(usuariosPrestTable.getSelectionModel().getSelectedItem());
+			
+			
 			//guardar el prestamo y cerrar la ventana
-			System.out.println("SALIR");
+			try {
+				ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
+				
+				main.getStage().close();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+			
 		}
 		
 		

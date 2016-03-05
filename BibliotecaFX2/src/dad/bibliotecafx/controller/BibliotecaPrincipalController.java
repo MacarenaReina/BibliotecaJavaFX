@@ -332,7 +332,6 @@ public class BibliotecaPrincipalController {
 				}
 
 				String lowerCaseFilter = newValue.toLowerCase();
-				Long cod = Long.parseLong(newValue);
 
 				if (usuario.getNombre().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
@@ -340,8 +339,12 @@ public class BibliotecaPrincipalController {
 					return true;
 				} else if (usuario.getRol().getTipo().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
-				} else if (usuario.getCodigo() >= cod) {
-					return true;
+				} else{
+					try{
+						if (usuario.getCodigo() >= Long.parseLong(newValue)) {
+							return true;
+						} 
+					} catch(NumberFormatException e){}
 				}
 				return false;
 			});
@@ -360,30 +363,18 @@ public class BibliotecaPrincipalController {
 					return true;
 				}
 				String lowerCaseFilter = newValue.toLowerCase();
-//				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-//				Date fecha = null;
-//				try {
-//					fecha = format.parse(newValue);
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-
-//				try {
 					if (prestamo.getUsuario().getNombre().toLowerCase().contains(lowerCaseFilter)) {
 						return true;
 					} else if (prestamo.getLibro().contains(newValue)) {
 						return true;
+					} else{
+						try{
+							if (prestamo.getCodigo() >= Long.parseLong(newValue)) {
+								return true;
+							} 
+						} catch(NumberFormatException e){}
 					}
-//					else if (prestamo.getFechaPrestamo().before(fecha)) {
-//						return true;
-//					} 
-					else if (prestamo.getCodigo() >= Long.parseLong(newValue)) {
-						return true;
-					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
+
 				return false;
 			});
 		});

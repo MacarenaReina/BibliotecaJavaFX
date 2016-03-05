@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.modelo.Rol;
+import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
 import dad.bibliotecafx.service.impl.RolService;
@@ -15,6 +16,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
@@ -37,35 +40,14 @@ public class UsuarioAltaController {
 	private Button nuevoRolButton, insertarUsuButton, cancelarUsuButton;
 	
 	public UsuarioAltaController() {
-//		Stage stage = new Stage();
-//		stage.setTitle("Alta usuario");
-//		stage.setWidth(298);
-//		stage.setHeight(154);
-//		stage.setResizable(false);
-//		
-//		URL url = getClass().getResource("/dad/bibliotecafx/docs/BibliotecaNuevoUsuario.fxml");
-//		FXMLLoader loader = new FXMLLoader(url);
-//		Scene scene = null;
-//		try {
-//			scene = new Scene(loader.load());
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
-//		
-//		stage.setScene(scene);
-//		stage.show();
 	}
 	
 	@FXML
 	private void initialize() {
-
-		
 	}
 	
 	@FXML
 	private void onNuevoRolButton() {
-		//En mi orde da error...
-		
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Insertar rol");
 //		dialog.setHeaderText("");
@@ -84,31 +66,44 @@ public class UsuarioAltaController {
 			ObservableList<Rol> roles = main.getRolesData();
 			rolUsuComboBox.setItems(roles);
 			rolUsuComboBox.setValue(roles.get(0));
-		}
-		
+		}		
 	}
 	
 	@FXML
 	private void onInsertarUsuButton() {
-//		System.out.println(nombreUsuText.getText());
-//		System.out.println(contraseniaUsuText.getCharacters().toString());
+		String nombre = nombreUsuText.getText();
+		String apellidos = apellidoUsuText.getText();
+		String nombreUsuario = nombreUsuarioUsuText.getText();
+		String contrasenia = contraseniaUsuText.getCharacters().toString();
+		Rol rol = rolUsuComboBox.getValue();
 		
-//		UsuarioItem usuario = new UsuarioItem();
-//		usuario.setNombre(nombreUsuText.getText()+" "+apellidoUsuText.getText());
-//		usuario.setUsuario(nombreUsuarioUsuText.getText());
-//		usuario.setPassword(contraseniaUsuText.getCharacters().toString());
-//		usuario.setRol(rol);
+		if(nombre.isEmpty() || apellidos.isEmpty() || nombreUsuario.isEmpty() || contrasenia.isEmpty() || rol.equals(null)) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Alta usuario");
+//			alert.setHeaderText("Look, a Warning Dialog");
+			alert.setContentText("Debe rellenar todos los campos");
+			alert.showAndWait();
+		}
+		else {
+			Usuario usuario = new Usuario();
+			usuario.setNombre(nombre+" "+apellidos);
+			usuario.setUsuario(nombreUsuario);
+			usuario.setPassword(contrasenia);
+			usuario.setRol(rol);
+			
+			try {
+				ServiceLocator.getUsuarioService().crearUsuario(usuario.toItem());
+				main.getStage().close();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+		}		
 		
-//		try {
-//			ServiceLocator.getUsuarioService().crearUsuario(usuario);
-//		} catch (ServiceException e) {
-//			e.printStackTrace();
-//		}
 	}
 	
 	@FXML
 	private void onCancelarButton() {
-		
+		main.getStage().close();
 	}
 	
 	public void setRolesData(ObservableList<Rol> roles){

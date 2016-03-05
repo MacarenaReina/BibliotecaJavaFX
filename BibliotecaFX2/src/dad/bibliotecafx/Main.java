@@ -32,7 +32,7 @@ import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 
-	private Stage primaryStage;
+	private Stage primaryStage, stage;
 
 	private ObservableList<Libro> librosData;
 	private ObservableList<Usuario> usuariosData;
@@ -117,7 +117,7 @@ public class Main extends Application {
 	}
 
 	public void showNuevoUsuarioScene() throws IOException {
-		Stage stage = new Stage();
+		stage = new Stage();
 		stage.setTitle("Alta usuario");
 		stage.setWidth(400);
 		stage.setHeight(300);
@@ -138,7 +138,7 @@ public class Main extends Application {
 	}
 	
 	public void showModificarUsuarioScene() throws IOException {
-		Stage stage = new Stage();
+		stage = new Stage();
 		stage.setTitle("Modificar usuario");
 		stage.setWidth(300);
 		stage.setHeight(225);
@@ -158,7 +158,7 @@ public class Main extends Application {
 	}
 	
 	public void showNuevoPrestamoScene() throws IOException {
-		Stage stage = new Stage();
+		stage = new Stage();
 		stage.setTitle("Nuevo préstamo");
 		stage.setWidth(700);
 		stage.setHeight(600);
@@ -208,6 +208,10 @@ public class Main extends Application {
 		} catch (ServiceException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public Stage getStage() {
+		return stage;
 	}
 
 	public static void main(String[] args) {
