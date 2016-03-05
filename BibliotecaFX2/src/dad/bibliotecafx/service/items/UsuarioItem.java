@@ -1,19 +1,10 @@
 package dad.bibliotecafx.service.items;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import dad.bibliotecafx.modelo.Prestamo;
-import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
-import dad.bibliotecafx.service.entidades.PrestamoEntity;
-import dad.bibliotecafx.service.entidades.RolEntity;
 import dad.bibliotecafx.service.entidades.UsuarioEntity;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 
 public class UsuarioItem {
 
@@ -21,7 +12,8 @@ public class UsuarioItem {
 	private String nombre;
 	private String usuario;
 	private String password;
-	private Set<RolItem> rol = new HashSet<RolItem>();
+//	private Set<RolItem> rol = new HashSet<RolItem>();
+	private RolItem rol;
 	private List<PrestamoItem> prestamos = new ArrayList<PrestamoItem>();
 
 	public Long getCodigo() {
@@ -56,13 +48,13 @@ public class UsuarioItem {
 		this.password = password;
 	}
 
-	public Set<RolItem> getRol() {
-		return rol;
-	}
-
-	public void setRol(Set<RolItem> rol) {
-		this.rol = rol;
-	}
+//	public Set<RolItem> getRol() {
+//		return rol;
+//	}
+//
+//	public void setRol(Set<RolItem> rol) {
+//		this.rol = rol;
+//	}
 	
 	public List<PrestamoItem> getPrestamos() {
 		return prestamos;
@@ -71,6 +63,14 @@ public class UsuarioItem {
 	public void setPrestamos(List<PrestamoItem> prestamos) {
 		this.prestamos = prestamos;
 	}
+	
+	public RolItem getRol() {
+		return rol;
+	}
+
+	public void setRol(RolItem rol) {
+		this.rol = rol;
+	}
 
 	public UsuarioEntity toEntity(){
 		UsuarioEntity ue = new UsuarioEntity();		
@@ -78,16 +78,7 @@ public class UsuarioItem {
 		ue.setNombre(getNombre());
 		ue.setUsuario(getUsuario());
 		ue.setPassword(getPassword());
-		List<PrestamoEntity> prestamos = new ArrayList<PrestamoEntity>();
-		for (PrestamoItem p : getPrestamos()) {
-			prestamos.add(p.toEntity());			
-		}
-		ue.setPrestamos(prestamos);
-		Set<RolEntity> roles = new HashSet<RolEntity>();
-		for (RolItem r : getRol()) {
-			roles.add(r.toEntity());			
-		}		
-		ue.setRoles(roles);
+		ue.setRol(getRol().toEntity());
 		return ue;
 	}
 	
@@ -97,16 +88,7 @@ public class UsuarioItem {
 		ue.setNombre(getNombre());
 		ue.setUsuario(getUsuario());
 		ue.setPassword(getPassword());
-		ObservableList<Prestamo> prestamos = FXCollections.observableArrayList(new ArrayList<Prestamo>());
-		for (PrestamoItem p : getPrestamos()) {
-			prestamos.add(p.toModel());			
-		}
-		ue.setPrestamos(prestamos);
-		ObservableSet<Rol> roles = FXCollections.observableSet(new HashSet<Rol>());
-		for (RolItem r : getRol()) {
-			roles.add(r.toModel());			
-		}		
-		ue.setRol(roles);
+		ue.setRol(getRol().toModel());
 		return ue;
 	}
 	

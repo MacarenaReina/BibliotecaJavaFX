@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import dad.bibliotecafx.service.items.AutorItem;
 import dad.bibliotecafx.service.items.LibroItem;
 
@@ -68,14 +69,14 @@ public class LibroEntity implements Serializable {
 		this.autores = autores;
 	}
 
-	public Integer getAnioPublicacion() {
-		return anioPublicacion;
-	}
-
 	public void setAnioPublicacion(Integer anioPublicacion) {
 		this.anioPublicacion = anioPublicacion;
 	}
 
+	public Integer getAnioPublicacion() {
+		return anioPublicacion;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -107,11 +108,11 @@ public class LibroEntity implements Serializable {
 		l.setISBN(getISBN());
 		l.setTitulo(getTitulo());
 		l.setAnioPublicacion(getAnioPublicacion());
-		Set<AutorItem> autoresList = new HashSet<AutorItem>();
-		for (AutorEntity a : getAutores()) {
-			autoresList.add(a.toItem());
-		}		
-		l.setAutores(autoresList);
+		Set<AutorItem> autores = new HashSet<AutorItem>();
+		for (AutorEntity autor : getAutores()) {
+			autores.add(autor.toItem());
+		}
+		l.setAutores(autores);
 		return l;		
 	}
 	

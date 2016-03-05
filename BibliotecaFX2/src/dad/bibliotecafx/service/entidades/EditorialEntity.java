@@ -12,7 +12,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import dad.bibliotecafx.service.items.EditorialItem;
-import dad.bibliotecafx.service.items.LibroItem;
 
 @SuppressWarnings("serial")
 @Entity
@@ -24,7 +23,6 @@ public class EditorialEntity implements Serializable {
 	private Long codigo;
 	@Column(columnDefinition="VARCHAR(50)")
 	private String nombre;	
-//	@OneToMany(fetch=FetchType.LAZY, mappedBy="editorial")
 	@OneToMany(mappedBy="editorial")	
 	private List<LibroEntity> libros = new ArrayList<LibroEntity>();
 		
@@ -81,11 +79,6 @@ public class EditorialEntity implements Serializable {
 		EditorialItem e = new EditorialItem();		
 		e.setCodigo(getCodigo());
 		e.setNombre(getNombre());
-		List<LibroItem> librosList = new ArrayList<LibroItem>();
-		for (LibroEntity l : getLibros()) {
-			librosList.add(l.toItem());
-		}	
-		e.setLibros(librosList);
 		return e;		
 	}	
 }

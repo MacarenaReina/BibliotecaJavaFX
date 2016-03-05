@@ -63,12 +63,12 @@ public class LibroItem {
 		le.setEditorial(getEditorial().toEntity());
 		le.setAnioPublicacion(getAnioPublicacion());
 		le.setISBN(getISBN());
-		le.setTitulo(getTitulo());		
-		Set<AutorEntity> autorList = new HashSet<AutorEntity>();
-		for (AutorItem a : getAutores()) {
-			autorList.add(a.toEntity());
-		}			
-		le.setAutores(autorList);
+		le.setTitulo(getTitulo());	
+		Set<AutorEntity> autores = new HashSet<AutorEntity>();
+		for (AutorItem autor : getAutores()) {
+			autores.add(autor.toEntity());
+		}
+		le.setAutores(autores);
 		return le;
 	}
 	
@@ -78,11 +78,11 @@ public class LibroItem {
 		le.setAnioPublicacion(getAnioPublicacion());
 		le.setISBN(getISBN());
 		le.setTitulo(getTitulo());		
-		ObservableSet<Autor> autorList = FXCollections.observableSet(new HashSet<Autor>());
-		for (AutorItem a : getAutores()) {
-			autorList.add(a.toModel());
-		}			
-		le.setAutores(autorList);
+		ObservableSet<Autor> autores = FXCollections.observableSet(new HashSet<Autor>());
+		for (AutorItem autor : getAutores()) {
+			autores.add(autor.toModel());
+		}		
+		le.setAutores(autores);
 		return le;
 	}
 }

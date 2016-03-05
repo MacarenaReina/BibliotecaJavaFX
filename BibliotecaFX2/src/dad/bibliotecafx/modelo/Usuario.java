@@ -1,19 +1,14 @@
 package dad.bibliotecafx.modelo;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import dad.bibliotecafx.service.items.PrestamoItem;
-import dad.bibliotecafx.service.items.RolItem;
 import dad.bibliotecafx.service.items.UsuarioItem;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.SetProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleSetProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -24,11 +19,12 @@ public class Usuario {
 	private final StringProperty nombre = new SimpleStringProperty(this, "nombre");
 	private final StringProperty usuario = new SimpleStringProperty(this, "usuario");
 	private final StringProperty password = new SimpleStringProperty(this, "password");
-	private final SetProperty<Rol> rol = new SimpleSetProperty<Rol>(
-			FXCollections.observableSet(new HashSet<Rol>()));
+//	private final SetProperty<Rol> rol = new SimpleSetProperty<Rol>(
+//			FXCollections.observableSet(new HashSet<Rol>()));
 	private final ListProperty<Prestamo> prestamos = new SimpleListProperty<Prestamo>(
 			FXCollections.observableArrayList(new ArrayList<Prestamo>()));
-
+	private ObjectProperty<Rol> rol = new SimpleObjectProperty<Rol>();
+	
 	public final LongProperty codigoProperty() {
 		return this.codigo;
 	}	
@@ -77,18 +73,6 @@ public class Usuario {
 		this.passwordProperty().set(password);
 	}	
 
-	public final SetProperty<Rol> rolProperty() {
-		return this.rol;
-	}	
-
-	public final javafx.collections.ObservableSet<dad.bibliotecafx.modelo.Rol> getRol() {
-		return this.rolProperty().get();
-	}	
-
-	public final void setRol(final javafx.collections.ObservableSet<dad.bibliotecafx.modelo.Rol> rol) {
-		this.rolProperty().set(rol);
-	}	
-
 	public final ListProperty<Prestamo> prestamosProperty() {
 		return this.prestamos;
 	}	
@@ -101,12 +85,25 @@ public class Usuario {
 		this.prestamosProperty().set(prestamos);
 	}
 	
+	public final ObjectProperty<Rol> rolProperty() {
+		return this.rol;
+	}
+	
+
+	public final dad.bibliotecafx.modelo.Rol getRol() {
+		return this.rolProperty().get();
+	}
+	
+
+	public final void setRol(final dad.bibliotecafx.modelo.Rol rol) {
+		this.rolProperty().set(rol);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		result = prime * result + ((usuario.get() == null) ? 0 : usuario.get().hashCode());
 		return result;
 	}
 
@@ -124,11 +121,6 @@ public class Usuario {
 				return false;
 		} else if (!codigo.equals(other.codigo))
 			return false;
-		if (usuario.get() == null) {
-			if (other.usuario.get() != null)
-				return false;
-		} else if (!usuario.get().equals(other.usuario.get()))
-			return false;
 		return true;
 	}
 	
@@ -138,17 +130,9 @@ public class Usuario {
 		u.setNombre(getNombre());
 		u.setPassword(getPassword());
 		u.setUsuario(getUsuario());
-		Set<RolItem> rolList = new HashSet<RolItem>();
-		for (Rol r : getRol()) {
-			rolList.add(r.toItem());
-		}		
-		u.setRol(rolList);
-		List<PrestamoItem> prestamoList = new ArrayList<PrestamoItem>();
-		for (Prestamo p : getPrestamos()) {
-			prestamoList.add(p.toItem());
-		}
-		u.setPrestamos(prestamoList);		
+		u.setRol(getRol().toItem());	
 		return u;
 	}
-	
+
+
 }

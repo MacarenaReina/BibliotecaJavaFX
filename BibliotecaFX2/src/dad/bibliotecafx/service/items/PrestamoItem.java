@@ -66,8 +66,8 @@ public class PrestamoItem {
 		pe.setFechaPrestamo(getFechaPrestamo());
 		pe.setUsuario(getUsuario().toEntity());
 		List<LibroEntity> libros = new ArrayList<LibroEntity>();
-		for (LibroItem l : getLibro()) {
-			libros.add(l.toEntity());
+		for (LibroItem libro : getLibro()) {
+			libros.add(libro.toEntity());
 		}
 		pe.setLibro(libros);
 		return pe;
@@ -80,8 +80,8 @@ public class PrestamoItem {
 		pe.setFechaPrestamo(getFechaPrestamo());
 		pe.setUsuario(getUsuario().toModel());
 		ObservableList<Libro> libros = FXCollections.observableArrayList(new ArrayList<Libro>());
-		for (LibroItem l : getLibro()) {
-			libros.add(l.toModel());
+		for (LibroItem libro : getLibro()) {
+			libros.add(libro.toModel());
 		}
 		pe.setLibro(libros);
 		return pe;

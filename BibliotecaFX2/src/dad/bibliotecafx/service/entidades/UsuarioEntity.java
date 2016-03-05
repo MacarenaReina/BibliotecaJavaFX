@@ -2,24 +2,18 @@ package dad.bibliotecafx.service.entidades;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import dad.bibliotecafx.service.items.PrestamoItem;
-import dad.bibliotecafx.service.items.RolItem;
 import dad.bibliotecafx.service.items.UsuarioItem;
 
 @SuppressWarnings("serial")
@@ -29,6 +23,7 @@ public class UsuarioEntity implements Serializable {
 
 	@Id
 	@GeneratedValue
+	@Column(name="codUsuario")	
 	private Long codigo;
 	@Column(columnDefinition = "VARCHAR (100)")
 	private String nombre;
@@ -37,9 +32,9 @@ public class UsuarioEntity implements Serializable {
 	@Column(columnDefinition = "VARCHAR(20)")
 	private String password;
 	
-	@ManyToMany(cascade=CascadeType.ALL,fetch =FetchType.LAZY)  
-	@JoinTable(name="Usuario_Rol", joinColumns=@JoinColumn(name="rol"), inverseJoinColumns=@JoinColumn(name="usuario")) 
-	private Set<RolEntity> roles = new HashSet<RolEntity>();
+	@ManyToOne
+	@JoinColumn(name="rol")
+	private RolEntity rol;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
 	private List<PrestamoEntity> prestamos = new ArrayList<PrestamoEntity>();
@@ -84,12 +79,13 @@ public class UsuarioEntity implements Serializable {
 		this.prestamos = prestamos;
 	}
 	
-	public Set<RolEntity> getRoles() {
-		return roles;
+
+	public RolEntity getRol() {
+		return rol;
 	}
 
-	public void setRoles(Set<RolEntity> roles) {
-		this.roles = roles;
+	public void setRol(RolEntity rol) {
+		this.rol = rol;
 	}
 
 	@Override
@@ -116,23 +112,13 @@ public class UsuarioEntity implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	public UsuarioItem toItem(){
 		UsuarioItem u = new UsuarioItem();		
 		u.setCodigo(getCodigo());
 		u.setNombre(getNombre());
-		u.setPassword(getPassword());
-		u.setUsuario(getUsuario());		
-		List<PrestamoItem> prestamoList = new ArrayList<PrestamoItem>();
-		for (PrestamoEntity p : getPrestamos()) {
-			prestamoList.add(p.toItem());
-		}
-		u.setPrestamos(prestamoList);	
-		Set<RolItem> rolList = new HashSet<RolItem>();
-		for (RolEntity r : getRoles()) {
-			rolList.add(r.toItem());
-		}				
+		u.setPassword(getPassword());	
+		u.setRol(getRol().toItem());			
 		return u;
 	}
-
 }

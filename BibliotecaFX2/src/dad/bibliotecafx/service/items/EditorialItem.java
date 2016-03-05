@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dad.bibliotecafx.modelo.Editorial;
-import dad.bibliotecafx.modelo.Libro;
 import dad.bibliotecafx.service.entidades.EditorialEntity;
 import dad.bibliotecafx.service.entidades.LibroEntity;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class EditorialItem {
 	
@@ -56,13 +53,7 @@ public class EditorialItem {
 	public Editorial toModel(){
 		Editorial ee = new Editorial();
 		ee.setCodigo(getCodigo());
-		ee.setNombre(getNombre());
-		
-		ObservableList<Libro> libros = FXCollections.observableArrayList(new ArrayList<Libro>());
-		for (LibroItem l : getLibros()) {
-			libros.add(l.toModel());			
-		}		
-		ee.setLibros(libros);		
+		ee.setNombre(getNombre());		
 		return ee;
 	}
 }

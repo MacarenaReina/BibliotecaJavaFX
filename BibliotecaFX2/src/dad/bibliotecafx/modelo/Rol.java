@@ -1,15 +1,20 @@
 package dad.bibliotecafx.modelo;
 
+import java.util.ArrayList;
 import dad.bibliotecafx.service.items.RolItem;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 
 public class Rol {
 	
 	private final LongProperty codigo = new SimpleLongProperty(this, "codigo");	
-	private final StringProperty tipo = new SimpleStringProperty(this, "tipo");		
+	private final StringProperty tipo = new SimpleStringProperty(this, "tipo");	
+	private final ListProperty<Usuario> usuarios = new SimpleListProperty<Usuario>(FXCollections.observableArrayList(new ArrayList<Usuario>()));
 		
 	public final LongProperty codigoProperty() {
 		return this.codigo;
@@ -34,6 +39,18 @@ public class Rol {
 	public final void setTipo(final java.lang.String tipo) {
 		this.tipoProperty().set(tipo);
 	}	
+
+	public final ListProperty<Usuario> usuariosProperty() {
+		return this.usuarios;
+	}	
+
+	public final javafx.collections.ObservableList<dad.bibliotecafx.modelo.Usuario> getUsuarios() {
+		return this.usuariosProperty().get();
+	}	
+
+	public final void setUsuarios(final javafx.collections.ObservableList<dad.bibliotecafx.modelo.Usuario> usuarios) {
+		this.usuariosProperty().set(usuarios);
+	}
 	
 	@Override
 	public int hashCode() {

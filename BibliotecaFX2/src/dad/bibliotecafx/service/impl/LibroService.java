@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.service.ILibroService;
 import dad.bibliotecafx.service.ServiceException;
+import dad.bibliotecafx.service.entidades.AutorEntity;
 import dad.bibliotecafx.service.entidades.LibroEntity;
 import dad.bibliotecafx.service.items.AutorItem;
 import dad.bibliotecafx.service.items.LibroItem;
@@ -49,15 +50,23 @@ public class LibroService implements ILibroService {
 		DataBase.commit();
 	}
 
+	//Esto no funciona...
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<LibroItem> librosPorAutor(AutorItem autor) throws ServiceException {
 		DataBase.begin();
+		List<AutorEntity> autoresList = new ArrayList<AutorEntity>();
+		autoresList.add(autor.toEntity());
 
 		Query consultaLibros = DataBase.getSession()
 				.createQuery(
-						"FROM LibroEntity AS libro INNER JOIN AutorEntity AS autor ON libro.autores.codigo = autor.codigo WHERE autor.codigo = :codAutor")
-				.setLong("codAutor", autor.getCodigo());
+						"FROM LibroEntity WHERE autores.codigo IN :autores");
+		consultaLibros.setParameterList("autores", autoresList);
+		
+//		Query consultaLibros = DataBase.getSession()
+//				.createQuery(
+//						"FROM LibroEntity WHERE autores.codigo = :cod").setLong("cod", autor.getCodigo());
+		
 		List<LibroEntity> librosList = consultaLibros.list();
 		List<LibroItem> libros = new ArrayList<LibroItem>();
 		for (LibroEntity l : librosList) {

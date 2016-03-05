@@ -1,10 +1,8 @@
 package dad.bibliotecafx.modelo;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import dad.bibliotecafx.service.items.EditorialItem;
-import dad.bibliotecafx.service.items.LibroItem;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -84,11 +82,6 @@ public class Editorial {
 		EditorialItem e = new EditorialItem();		
 		e.setCodigo(getCodigo());
 		e.setNombre(getNombre());
-		List<LibroItem> librosList = new ArrayList<LibroItem>();
-		for (Libro l : getLibros()) {
-			librosList.add(l.toItem());
-		}	
-		e.setLibros(librosList);
 		return e;		
 	}
 	

@@ -24,7 +24,6 @@ public class Libro {
 	private final IntegerProperty anioPublicacion = new SimpleIntegerProperty(this, "anioPublicacion");
 	private final SetProperty<Autor> autores = new SimpleSetProperty<Autor>(FXCollections.observableSet(new HashSet<Autor>()));
 	
-	
 	public final StringProperty ISBNProperty() {
 		return this.ISBN;
 	}	
@@ -71,7 +70,7 @@ public class Libro {
 
 	public final void setAutores(final javafx.collections.ObservableSet<dad.bibliotecafx.modelo.Autor> autores) {
 		this.autoresProperty().set(autores);
-	}	
+	}
 
 	public final IntegerProperty anioPublicacionProperty() {
 		return this.anioPublicacion;
@@ -117,11 +116,11 @@ public class Libro {
 		l.setISBN(getISBN());
 		l.setTitulo(getTitulo());
 		l.setAnioPublicacion(getAnioPublicacion());
-		Set<AutorItem> autoresList = new HashSet<AutorItem>();
-		for (Autor a : getAutores()) {
-			autoresList.add(a.toItem());
-		}		
-		l.setAutores(autoresList);
+		Set<AutorItem> autores = new HashSet<AutorItem>();
+		for (Autor autor : getAutores()) {
+			autores.add(autor.toItem());
+		}
+		l.setAutores(autores);
 		return l;		
 	}
 

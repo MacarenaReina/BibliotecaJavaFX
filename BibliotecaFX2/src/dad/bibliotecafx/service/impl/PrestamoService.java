@@ -9,6 +9,7 @@ import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.service.IPrestamoService;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.entidades.PrestamoEntity;
+import dad.bibliotecafx.service.entidades.UsuarioEntity;
 import dad.bibliotecafx.service.items.PrestamoItem;
 import dad.bibliotecafx.service.items.UsuarioItem;
 
@@ -52,11 +53,13 @@ public class PrestamoService implements IPrestamoService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PrestamoItem> prestamosPorUsuario(UsuarioItem usuario) throws ServiceException {
-		DataBase.begin();
+		DataBase.begin();		
+		List<UsuarioEntity> usuariosList = new ArrayList<UsuarioEntity>();
+		usuariosList.add(usuario.toEntity());
 		Query consultaPrestamos = DataBase.getSession()
 				.createQuery(
-						"FROM PrestamoEntity AS p INNER JOIN UsuarioEntity AS u ON p.usuario.codigo u.codigo WHERE u.codigo = :codUsuario")
-				.setLong("codUsuario", usuario.getCodigo());
+						"FROM PrestamoEntity WHERE usuario IN :usuarios");
+		consultaPrestamos.setParameterList("usuarios", usuariosList);
 		List<PrestamoEntity> prestamosList = consultaPrestamos.list();
 		List<PrestamoItem> prestamos = new ArrayList<PrestamoItem>();
 		for (PrestamoEntity p : prestamosList) {

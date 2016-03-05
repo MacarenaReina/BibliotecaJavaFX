@@ -117,7 +117,6 @@ public class Main extends Application {
 		loader.setLocation(url);
 		
 		Scene scene = new Scene(loader.load());
-		System.out.println("Estableciendo main");
 		
 		UsuarioAltaController controller = ((UsuarioAltaController) loader.getController());
 		controller.setMain(this);

@@ -113,11 +113,11 @@ public class Prestamo {
 		p.setFechaDevolucion(getFechaDevolucion());
 		p.setFechaPrestamo(getFechaPrestamo());
 		p.setUsuario(getUsuario().toItem());
-		List<LibroItem> librosList = new ArrayList<LibroItem>();
-		for (Libro l : getLibro()) {
-			librosList.add(l.toItem());
+		List<LibroItem> libros = new ArrayList<LibroItem>();
+		for (Libro libro : getLibro()) {
+			libros.add(libro.toItem());
 		}
-		p.setLibro(librosList);
+		p.setLibro(libros);
 		return p;
 	}
 	

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,8 +27,7 @@ public class PrestamoEntity implements Serializable {
 	@Id
 	@GeneratedValue
 	private Long codigo;
-//	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	private List<LibroEntity> libro = new ArrayList<LibroEntity>();
 	@ManyToOne
 	@JoinColumn(name="usuario")
@@ -108,11 +108,11 @@ public class PrestamoEntity implements Serializable {
 		p.setFechaDevolucion(getFechaDevolucion());
 		p.setFechaPrestamo(getFechaPrestamo());
 		p.setUsuario(getUsuario().toItem());
-		List<LibroItem> librosList = new ArrayList<LibroItem>();
-		for (LibroEntity l : getLibro()) {
-			librosList.add(l.toItem());
+		List<LibroItem> libros = new ArrayList<LibroItem>();
+		for (LibroEntity libro : getLibro()) {
+			libros.add(libro.toItem());
 		}
-		p.setLibro(librosList);
+		p.setLibro(libros);
 		return p;
 	}
 }

@@ -8,7 +8,9 @@ import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.service.ISancionService;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.entidades.SancionEntity;
+import dad.bibliotecafx.service.entidades.UsuarioEntity;
 import dad.bibliotecafx.service.items.SancionItem;
+import dad.bibliotecafx.service.items.UsuarioItem;
 
 public class SancionService implements ISancionService {
 
@@ -45,6 +47,25 @@ public class SancionService implements ISancionService {
 		DataBase.begin();
 		DataBase.getSession().delete(sancion.toEntity());
 		DataBase.commit();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SancionItem> listarSancionesPorUsuario(UsuarioItem usuario) throws ServiceException {
+		DataBase.begin();		
+		List<UsuarioEntity> usuariosList = new ArrayList<UsuarioEntity>();
+		usuariosList.add(usuario.toEntity());
+		Query consultaSanciones = DataBase.getSession()
+				.createQuery(
+						"FROM SancionEntity WHERE prestamo.usuario IN :usuarios");
+		consultaSanciones.setParameterList("usuarios", usuariosList);
+		List<SancionEntity> sancionList = consultaSanciones.list();
+		List<SancionItem> sanciones = new ArrayList<SancionItem>();
+		for (SancionEntity p : sancionList) {
+			sanciones.add(p.toItem());
+		}
+		DataBase.commit();
+		return sanciones;
 	}
 
 }
