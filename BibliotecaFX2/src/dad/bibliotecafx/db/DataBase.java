@@ -38,4 +38,8 @@ public class DataBase {
 		System.out.println("listo");			
 	}
 	
+	public static void rollback(){
+		getSession().beginTransaction().rollback();
+	}
+	
 }

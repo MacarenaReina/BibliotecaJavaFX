@@ -1,16 +1,19 @@
 package dad.bibliotecafx.controller;
 
 import dad.bibliotecafx.Main;
+import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 
 public class UsuarioModificarController {
 	
@@ -49,7 +52,13 @@ public class UsuarioModificarController {
 		try {
 			ServiceLocator.getUsuarioService().actualizarUsuario(usuario.toItem());
 			main.getStage().close();
-		} catch (ServiceException e) {
+		} catch (ServiceException | RuntimeException e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al actualizar el usuario:\n" + e.getMessage()
+					+ "\nLos datos no se guardarán en la Base de Datos");
+			alert.showAndWait();
+			DataBase.rollback();
 			e.printStackTrace();
 		}
 	}

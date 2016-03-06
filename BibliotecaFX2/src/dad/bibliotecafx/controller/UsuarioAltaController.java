@@ -1,21 +1,16 @@
 package dad.bibliotecafx.controller;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Optional;
 
 import dad.bibliotecafx.Main;
+import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
-import dad.bibliotecafx.service.impl.RolService;
 import dad.bibliotecafx.service.items.RolItem;
-import dad.bibliotecafx.service.items.UsuarioItem;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -23,7 +18,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.stage.Stage;
 
 public class UsuarioAltaController {
 	
@@ -58,7 +52,13 @@ public class UsuarioAltaController {
 			rol.setTipo(result.get());
 			try {
 				ServiceLocator.getRolService().crearRol(rol);
-			} catch (ServiceException e) {
+			} catch (ServiceException | RuntimeException e) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setContentText("Ha ocurrido un error al crear el rol:\n" + e.getMessage()
+						+ "\nLos datos no se guardarán en la Base de Datos");
+				alert.showAndWait();
+				DataBase.rollback();
 				e.printStackTrace();
 			}
 			
@@ -94,7 +94,13 @@ public class UsuarioAltaController {
 			try {
 				ServiceLocator.getUsuarioService().crearUsuario(usuario.toItem());
 				main.getStage().close();
-			} catch (ServiceException e) {
+			} catch (ServiceException | RuntimeException e) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setContentText("Ha ocurrido un error al crear el usuario:\n" + e.getMessage()
+						+ "\nLos datos no se guardarán en la Base de Datos");
+				alert.showAndWait();
+				DataBase.rollback();
 				e.printStackTrace();
 			}
 		}		

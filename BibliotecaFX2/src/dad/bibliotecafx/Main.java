@@ -71,9 +71,6 @@ public class Main extends Application {
 				rolesData.add(rolItem.toModel());
 			}
 		} catch (ServiceException e2) {
-			// TODO Auto-generated catch block
-			// Poner OptionPane que indique que ha ocurrido un error al
-			// consultar la Base de Datos
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setContentText("Ha ocurrido un error al realizar consultas a la Base de Datos");
@@ -88,8 +85,10 @@ public class Main extends Application {
 		try {
 			showBibliotecaScene();
 		} catch (IOException e) {
-			// TODO: Mostrar mensaje, no ha sido posible iniciar la
-			// aplicación...
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al iniciar la aplicación");
+			alert.showAndWait();
 			e.printStackTrace();
 		}
 
@@ -109,6 +108,10 @@ public class Main extends Application {
 				librosData.add(libroItem.toModel());
 			}
 		} catch (ServiceException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al actualizar los libros");
+			alert.showAndWait();
 			e1.printStackTrace();
 		}
 	}
@@ -193,10 +196,6 @@ public class Main extends Application {
 		stage.showAndWait();
 	}
 	
-//	public Stage getPrimaryStage() {
-//        return primaryStage;
-//   }
-	
 	public ObservableList<Usuario> getUsuariosData() {
 		actualizarUsuarios();
 		return usuariosData;
@@ -225,6 +224,10 @@ public class Main extends Application {
 				usuariosData.add(usuarioItem.toModel());
 			}
 		} catch (ServiceException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al actualizar los usuarios");
+			alert.showAndWait();
 			e1.printStackTrace();
 		}
 	}
@@ -237,6 +240,10 @@ public class Main extends Application {
 				prestamosData.add(prestamoItem.toModel());
 			}
 		} catch (ServiceException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al actualizar los préstamos");
+			alert.showAndWait();
 			e1.printStackTrace();
 		}
 	}
@@ -249,6 +256,10 @@ public class Main extends Application {
 				rolesData.add(rolItem.toModel());
 			}
 		} catch (ServiceException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al actualizar los préstamos");
+			alert.showAndWait();
 			e1.printStackTrace();
 		}
 	}

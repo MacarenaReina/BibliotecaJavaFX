@@ -5,17 +5,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
 import dad.bibliotecafx.Main;
+import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Libro;
 import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -27,9 +25,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class PrestamoInsertarController {
@@ -90,7 +86,6 @@ public class PrestamoInsertarController {
 	private void onSiguientePrestButton() {
 		int usuariosSeleccionados = usuariosPrestTable.getSelectionModel().getSelectedItems().size();
 		int librosSeleccionados = librosPrestTable.getSelectionModel().getSelectedItems().size();
-		ObservableList<Libro> librosSeleccionadosList = FXCollections.observableArrayList();
 		ObservableSet<Libro> libros = FXCollections.observableSet();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -157,22 +152,30 @@ public class PrestamoInsertarController {
 				}				
 				prestamo.setLibro(libros);		
 				
-				
 				String formattedValue = (datePicker.getValue()).format(formatter);
 				try {
 					prestamo.setFechaPrestamo(sdf.parse(formattedValue));
 				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setContentText("Ha ocurrido un error al intentar parsear la fecha:\n" + e1.getMessage()
+							+ "\nCompruebe que la fecha del préstamo es correcta");
+					alert.showAndWait();
 					e1.printStackTrace();
 				}
 				prestamo.getFechaPrestamo();
 				
 				//guardar el prestamo y cerrar la ventana
 				try {
-					ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
-					
+					ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());					
 					main.getStage().close();
-				} catch (ServiceException e) {
+				} catch (ServiceException | RuntimeException e) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setContentText("Ha ocurrido un error al grabar el péstamo: \n" + e.getMessage()
+							+ "\nLos datos no se guardarán en la Base de Datos");
+					alert.showAndWait();
+					DataBase.rollback();
 					e.printStackTrace();
 				}
 			
