@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
+import antlr.collections.List;
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Autor;
 import dad.bibliotecafx.modelo.Libro;
 import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.modelo.Rol;
+import dad.bibliotecafx.modelo.Sancion;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
+import dad.bibliotecafx.utils.ReportsUtils;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -28,13 +32,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import net.sf.jasperreports.engine.JRException;
 
 public class BibliotecaPrincipalController {
 
 	private Main main;
 
-	// private StringProperty usuario, password;
-	
 	@FXML
 	private Button devolucionButton;
 
@@ -97,6 +100,25 @@ public class BibliotecaPrincipalController {
 	@FXML
 	private TableColumn<Prestamo, Date> fechadevolPresTableColumn;
 
+	// PESTAÑA SANCIONES:
+	private FilteredList<Sancion> filtroSanciones;
+	SortedList<Sancion> sortedDataSanciones;
+
+	@FXML
+	private TextField sancionesText;
+	@FXML
+	private Button nuevaSancionButton, eliminarSancionButton, editarSancionButton;
+	@FXML
+	private TableView<Sancion> sancionesTable;
+//	@FXML
+//	private TableColumn<Sancion, Prestamo> prestamoSancionTableColumn;
+	@FXML
+	private TableColumn<Sancion, Prestamo> usuarioSancionTableColumn;
+	@FXML
+	private TableColumn<Sancion, Date> fechainiSancionTableColumn;
+	@FXML
+	private TableColumn<Sancion, Date> fechafinSancionTableColumn;
+
 	ObservableList<TableColumn<String, ?>> buscarPresComboBoxOL;
 	ObservableList<Rol> rolesComboBox;
 
@@ -116,8 +138,6 @@ public class BibliotecaPrincipalController {
 		usuariosTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		nombreTableColum.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
 		nombreDeUsuTableColumn.setCellValueFactory(cellData -> cellData.getValue().usuarioProperty());
-		// nombreDeUsuTableColumn.setCellValueFactory(new
-		// PropertyValueFactory<Usuario, String>("usuario"));
 
 		rolTableColumn.setCellValueFactory(new PropertyValueFactory<Usuario, String>("rol"));
 
@@ -128,6 +148,14 @@ public class BibliotecaPrincipalController {
 		usuarioPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().usuarioProperty());
 		fechainiPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaPrestamoProperty());
 		fechadevolPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaDevolucionProperty());
+
+		// Sanciones:
+		sancionesTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+//		prestamoSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().prestamoProperty());
+		usuarioSancionTableColumn.setCellValueFactory(new PropertyValueFactory<Sancion, Prestamo>("prestamo"));
+//		libroSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().libroProperty());
+		fechainiSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaAltaProperty());
+		fechafinSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaFinalizacionProperty());
 	}
 
 	// A partir de aquí es de la biblioteca:
@@ -136,7 +164,28 @@ public class BibliotecaPrincipalController {
 
 	@FXML
 	private void onGenerarCarnetUsu(ActionEvent e) {
-		System.out.println("GENERAR CARNET");
+		int usuariosSeleccionados = usuariosTable.getSelectionModel().getSelectedItems().size();
+		if (usuariosSeleccionados == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Generar carnet de usuario");
+			alert.setContentText("Debe seleccionar un usuario");
+			alert.showAndWait();
+		} else {
+			main.getPrimaryStage().getScene().setCursor(javafx.scene.Cursor.WAIT);
+			for (Usuario usu : usuariosTable.getSelectionModel().getSelectedItems()) {
+				try {
+					new ReportsUtils().generarCarnet(usu);
+				} catch (IOException | JRException e1) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setContentText("Ha ocurrido un error al imprimir el carnet");
+					alert.showAndWait();
+					e1.printStackTrace();
+					e1.printStackTrace();
+				}
+			}
+			main.getPrimaryStage().getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+		}
 	}
 
 	@FXML
@@ -160,13 +209,11 @@ public class BibliotecaPrincipalController {
 		if (usuariosSeleccionados == 0) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Modificar usuario");
-			// alert.setHeaderText("Look, a Warning Dialog");
 			alert.setContentText("Debe seleccionar el usuario que quiere modificar");
 			alert.showAndWait();
 		} else if (usuariosSeleccionados >= 2) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Modificar usuario");
-			// alert.setHeaderText("Look, a Warning Dialog");
 			alert.setContentText("Sólo puede seleccionar un usuario para modificar.");
 			alert.showAndWait();
 		} else {
@@ -189,7 +236,6 @@ public class BibliotecaPrincipalController {
 		if (usuariosSeleccionados == 0) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Eliminar usuario");
-			// alert.setHeaderText("Look, a Warning Dialog");
 			alert.setContentText("Debe seleccionar al menos un usuario");
 			alert.showAndWait();
 		} else {
@@ -200,15 +246,8 @@ public class BibliotecaPrincipalController {
 			if (result.isPresent() && result.get() == ButtonType.OK) {
 				for (Usuario usu : usuariosTable.getSelectionModel().getSelectedItems()) {
 					try {
-						System.out.println(usu.getNombre());
 						ServiceLocator.getUsuarioService().eliminarUsuario(usu.toItem());
 						usuariosTable.setItems(main.getUsuariosData());
-
-						// Esta línea no funciona porque estoy actualizando los
-						// datos al llamar a getUsuariosData y ya no encuentra
-						// el q
-						// elimine, por eso puse la anterior:
-						// main.getUsuariosData().remove(usuariosTable.getSelectionModel().getSelectedItem());
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
@@ -222,6 +261,8 @@ public class BibliotecaPrincipalController {
 			}
 		}
 	}
+
+	// PRÉSTAMOS:
 
 	@FXML
 	private void onNuevoPrestamo(ActionEvent e) {
@@ -243,7 +284,6 @@ public class BibliotecaPrincipalController {
 		if (prestamosSeleccionados == 0) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Eliminar préstamo");
-			// alert.setHeaderText("Look, a Warning Dialog");
 			alert.setContentText("Debe seleccionar al menos un préstamo");
 			alert.showAndWait();
 		} else {
@@ -252,12 +292,10 @@ public class BibliotecaPrincipalController {
 			alert.setContentText("¿Seguro que quiere eliminar " + prestamosSeleccionados + " préstamos seleccionados?");
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.isPresent() && result.get() == ButtonType.OK) {
-
 				for (Prestamo prest : prestamosTable.getSelectionModel().getSelectedItems()) {
 					try {
 						ServiceLocator.getPrestamoService().eliminarPrestamo(prest.toItem());
 						prestamosTable.setItems(main.getPrestamosData());
-						// main.getPrestamosData().remove(prestamosTable.getSelectionModel().getSelectedItem());
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
@@ -272,13 +310,147 @@ public class BibliotecaPrincipalController {
 		}
 	}
 
+	@FXML
+	public void onEditarPrestamoButton() {
+		int prestamosSeleccionados = prestamosTable.getSelectionModel().getSelectedItems().size();
+		if (prestamosSeleccionados == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Editar préstamo");
+			alert.setContentText("Debe seleccionar al menos un préstamo");
+			alert.showAndWait();
+		} else if (prestamosSeleccionados >= 2) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Editar préstamo");
+			alert.setContentText("Sólo puede modificar un préstamo a la vez");
+			alert.showAndWait();
+		} else {
+			// TODO Editar préstamo
+		}
+	}
+
+	@FXML
+	public void onDevolucionPrestamoButton() {
+		int prestamosSeleccionados = prestamosTable.getSelectionModel().getSelectedItems().size();
+		if (prestamosSeleccionados == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Editar préstamo");
+			alert.setContentText("Debe seleccionar al menos un préstamo");
+			alert.showAndWait();
+		} else if (prestamosSeleccionados >= 2) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Editar préstamo");
+			alert.setContentText("Sólo puede modificar un préstamo a la vez");
+			alert.showAndWait();
+		} else {
+			try {
+				this.main.showDevolucionPrestamoDialog(prestamosTable.getSelectionModel().getSelectedItem());
+				prestamosTable.setItems(main.getPrestamosData());
+				sancionesTable.setItems(main.getSancionesData());
+			} catch (IOException e1) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario");
+				alert.showAndWait();
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	// SANCIONES:
+
+	@FXML
+	private void onNuevaSancion() {
+		try {
+			this.main.showNuevaSancionScene();
+			sancionesTable.setItems(main.getSancionesData());
+		} catch (IOException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de crear sanciones.");
+			alert.showAndWait();
+			e1.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void onEliminarSancion() {
+		int sancionesSeleccionadas = sancionesTable.getSelectionModel().getSelectedItems().size();
+		if (sancionesSeleccionadas == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Eliminar sanción");
+			alert.setContentText("Debe seleccionar al menos una sanción");
+			alert.showAndWait();
+		} else {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Eliminar sanción");
+			alert.setContentText("¿Seguro que quiere eliminar " + sancionesSeleccionadas + " sanciones seleccionados?");
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.isPresent() && result.get() == ButtonType.OK) {
+				for (Sancion sancion : sancionesTable.getSelectionModel().getSelectedItems()) {
+					try {
+						ServiceLocator.getSancionService().eliminarSancion(sancion.toItem());
+						sancionesTable.setItems(main.getSancionesData());
+					} catch (ServiceException | RuntimeException e1) {
+						Alert alertError = new Alert(AlertType.ERROR);
+						alertError.setTitle("Error");
+						alertError.setContentText("Ha ocurrido un error al eliminar la sanción:\n" + e1.getMessage()
+								+ "\nLos datos no se guardarán en la Base de Datos");
+						alertError.showAndWait();
+						DataBase.rollback();
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	@FXML
+	public void onEditarSancion() {
+		// TODO editar sanción
+	}
+
+	// MENÚ - ROLES:
+
+	@FXML
+	public void gestionRoles() {
+		try {
+			this.main.showGestionRolesScene();
+		} catch (IOException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de Gestión de roles.");
+			alert.showAndWait();
+			e1.printStackTrace();
+		}
+	}
+
+	// MENÚ - CONFIGURACIONES:
+
+	@FXML
+	public void gestionConfiguraciones() {
+		try {
+			this.main.showGesionConfiuracionesDialog();
+		} catch (IOException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario");
+			alert.showAndWait();
+			e1.printStackTrace();
+		}
+	}
+
+	// CARGAR MAIN:
+
 	public void setMain(Main main) {
 		this.main = main;
 
 		librosTable.setItems(main.getLibrosData());
-		usuariosTable.setItems(main.getUsuariosData()); // lo vi en internet
+		usuariosTable.setItems(main.getUsuariosData());
 		prestamosTable.setItems(main.getPrestamosData());
+		sancionesTable.setItems(main.getSancionesData());
 	}
+
+	// FILTROS
 
 	public void setFilterLibros(ObservableList<Libro> libros) {
 		filtroLibros = new FilteredList<>(libros, p -> true);
@@ -346,6 +518,7 @@ public class BibliotecaPrincipalController {
 					return true;
 				}
 				String lowerCaseFilter = newValue.toLowerCase();
+
 				if (prestamo.getUsuario().getNombre().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
 				} else if (prestamo.getLibro().contains(newValue)) {
@@ -368,45 +541,45 @@ public class BibliotecaPrincipalController {
 		prestamosTable.setItems(sortedDataPrestamos);
 	}
 
-	@FXML
-	public void gestionRoles() {
+	public void setFilterSanciones(ObservableList<Sancion> sanciones) {
+		filtroSanciones = new FilteredList<>(sanciones, p -> true);
+		sancionesText.textProperty().addListener((observable, oldValue, newValue) -> {
+			filtroSanciones.setPredicate(sancion -> {
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
+				String lowerCaseFilter = newValue.toLowerCase();
+				String nombreUsuario = sancion.getPrestamo().toString().toLowerCase();
 
+				if (nombreUsuario.contains(lowerCaseFilter)) {
+					return true;
+				} else {
+					try {
+						if (sancion.getPrestamo().getCodigo() >= Long.parseLong(newValue)) {
+							return true;
+						}
+						if (sancion.getPrestamo().getUsuario().getCodigo() >= Long.parseLong(newValue)) {
+							return true;
+						}
+					} catch (NumberFormatException e) {
+					}
+				}
+
+				return false;
+			});
+		});
+
+		sortedDataSanciones = new SortedList<>(filtroSanciones);
+		sortedDataSanciones.comparatorProperty().bind(sancionesTable.comparatorProperty());
+		sancionesTable.setItems(sortedDataSanciones);
 	}
 
-	@FXML
-	public void gestionConfiguraciones() {
-
-	}
+	// SALIR
 
 	@FXML
 	public void salir() {
 		DataBase.disconnect();
 		main.getPrimaryStage().close();
-	}
-
-	@FXML
-	public void onEditarPrestamoButton() {
-		int prestamosSeleccionados = prestamosTable.getSelectionModel().getSelectedItems().size();
-		if (prestamosSeleccionados == 0) {
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Editar préstamo");
-			// alert.setHeaderText("Look, a Warning Dialog");
-			alert.setContentText("Debe seleccionar al menos un préstamo");
-			alert.showAndWait();
-		} else if(prestamosSeleccionados >= 2) {
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Editar préstamo");
-			// alert.setHeaderText("Look, a Warning Dialog");
-			alert.setContentText("Sólo puede modificar un préstamo a la vez");
-			alert.showAndWait();
-		} else{
-			//TODO Editar préstamo
-		}
-	}
-	
-	@FXML
-	public void onDevolucionPrestamoButton(){
-		
 	}
 
 }

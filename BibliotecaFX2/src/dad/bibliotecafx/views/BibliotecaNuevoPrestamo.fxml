@@ -52,6 +52,15 @@
       </StackPane>
    </center>
    <top>
-      <DatePicker fx:id="datePicker" BorderPane.alignment="CENTER" />
+      <FlowPane prefHeight="25.0" prefWidth="574.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Fecha del préstamo:">
+               <FlowPane.margin>
+                  <Insets right="10.0" />
+               </FlowPane.margin>
+            </Label>
+            <DatePicker fx:id="datePicker" promptText="Fecha del préstamo" />
+         </children>
+      </FlowPane>
    </top>
 </BorderPane>

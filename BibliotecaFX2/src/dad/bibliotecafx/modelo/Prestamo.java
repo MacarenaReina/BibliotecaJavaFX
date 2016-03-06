@@ -125,4 +125,9 @@ public class Prestamo {
 		return p;
 	}
 	
+	@Override
+	public String toString() {
+		return getUsuario().getNombre();
+	}
+	
 }

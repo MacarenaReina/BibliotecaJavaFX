@@ -8,7 +8,6 @@ import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
-import dad.bibliotecafx.service.items.RolItem;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -48,10 +47,10 @@ public class UsuarioAltaController {
 		dialog.setContentText("Nombre del nuevo rol:");
 		Optional<String> result = dialog.showAndWait();
 		if (result.isPresent()){
-		    RolItem rol = new RolItem();
+		    Rol rol = new Rol();
 			rol.setTipo(result.get());
 			try {
-				ServiceLocator.getRolService().crearRol(rol);
+				ServiceLocator.getRolService().crearRol(rol.toItem());
 			} catch (ServiceException | RuntimeException e) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Error");

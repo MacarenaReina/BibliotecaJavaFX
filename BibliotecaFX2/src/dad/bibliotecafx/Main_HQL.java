@@ -151,7 +151,6 @@ public class Main_HQL {
 //			ServiceLocator.getUsuarioService().crearUsuario(usuarioAdmin.toItem());
 //			
 //			usuarioAdmin.setCodigo(1);
-//
 //			
 //			RolUsuario ru = new RolUsuario();
 //			ru.setPermiso(rolAdmin);
@@ -270,7 +269,7 @@ public class Main_HQL {
 			prestamo.setUsuario(u2);
 			prestamo.setLibro(libros);
 
-			ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
+//			ServiceLocator.getPrestamoService().crearPrestamo(prestamo.toItem());
 //			
 //			prestamo.setCodigo(1);
 //			

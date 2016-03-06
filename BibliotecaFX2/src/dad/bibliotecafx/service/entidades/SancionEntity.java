@@ -21,10 +21,9 @@ public class SancionEntity implements Serializable {
 	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
 	@JoinColumn(name="prestamo")
 	private PrestamoEntity prestamo;
-	@Id
-	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
-	@JoinColumn(name="libro")
-	private LibroEntity libro;
+//	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+//	@JoinColumn(name="libro")
+//	private LibroEntity libro;
 	@Column(columnDefinition="DATE")
 	private Date fechaAlta;
 	@Column(columnDefinition="DATE")
@@ -38,13 +37,13 @@ public class SancionEntity implements Serializable {
 		this.prestamo = prestamo;
 	}
 
-	public LibroEntity getLibro() {
-		return libro;
-	}
-
-	public void setLibro(LibroEntity libro) {
-		this.libro = libro;
-	}
+//	public LibroEntity getLibro() {
+//		return libro;
+//	}
+//
+//	public void setLibro(LibroEntity libro) {
+//		this.libro = libro;
+//	}
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -66,7 +65,7 @@ public class SancionEntity implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((libro == null) ? 0 : libro.hashCode());
+//		result = prime * result + ((libro == null) ? 0 : libro.hashCode());
 		result = prime * result + ((prestamo == null) ? 0 : prestamo.hashCode());
 		return result;
 	}
@@ -80,11 +79,11 @@ public class SancionEntity implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		SancionEntity other = (SancionEntity) obj;
-		if (libro == null) {
-			if (other.libro != null)
-				return false;
-		} else if (!libro.equals(other.libro))
-			return false;
+//		if (libro == null) {
+//			if (other.libro != null)
+//				return false;
+//		} else if (!libro.equals(other.libro))
+//			return false;
 		if (prestamo == null) {
 			if (other.prestamo != null)
 				return false;
@@ -97,7 +96,7 @@ public class SancionEntity implements Serializable {
 		SancionItem s = new SancionItem();		
 		s.setFechaAlta(getFechaAlta());
 		s.setFechaFinalizacion(getFechaFinalizacion());
-		s.setLibro(getLibro().toItem());
+//		s.setLibro(getLibro().toItem());
 		s.setPrestamo(getPrestamo().toItem());		
 		return s;
 	}

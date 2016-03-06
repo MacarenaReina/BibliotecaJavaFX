@@ -1,5 +1,6 @@
 package dad.bibliotecafx.controller;
 
+
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Rol;
@@ -32,13 +33,13 @@ public class UsuarioModificarController {
 	private ComboBox<Rol> rolModifUsuComboBox;
 	@FXML
 	private Button modificarModifUsuButton, cancelarModifUsuButton;
-	
-	public UsuarioModificarController() {
 		
-	}
-	
 	@FXML
 	private void initialize() {
+		nombreModifUsuText.requestFocus();
+	}
+	
+	public UsuarioModificarController(){
 		
 	}
 	
@@ -74,25 +75,22 @@ public class UsuarioModificarController {
 	
 	public void setRolesData(ObservableList<Rol> roles){
 		rolModifUsuComboBox.setItems(roles);
-//		rolModifUsuComboBox.setValue(roles.get(0));
 	}
-	
-	//TODO: no sabía otra forma de pasarle los datos del usuario
+
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 		
 		String [] usuarioArray = usuario.getNombre().split(" ");
 		if(usuarioArray.length >= 1) {
 			nombreModifUsuText.setText(usuarioArray[0]);
+			nombreModifUsuText.selectAll();
+			nombreModifUsuText.requestFocus();
 		}
 		if(usuarioArray.length >= 2) {
 			for(int i=1; i< usuarioArray.length; i++) {
-				apellidosModifUsuText.setText(apellidosModifUsuText.getText() + usuarioArray[i]+" ");
+				apellidosModifUsuText.setText(apellidosModifUsuText.getText() + usuarioArray[i]+ " ");
 			}
 		}
-		
-		
-		//TODO: faltaría dividir el campo nombre en nombre y apellido
 		nombreUsuModifUsuText.setText(usuario.getUsuario());
 		contraseniaModifUsuText.setText(usuario.getPassword());
 		rolModifUsuComboBox.setValue(usuario.getRol());

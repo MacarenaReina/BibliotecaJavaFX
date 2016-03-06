@@ -31,7 +31,7 @@ public class SancionService implements ISancionService {
 	@Override
 	public void crearSancion(SancionItem sancion) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().save(sancion.toEntity());
+		DataBase.getSession().saveOrUpdate(sancion.toEntity());
 		DataBase.commit();
 	}
 
