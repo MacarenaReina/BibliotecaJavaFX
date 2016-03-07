@@ -31,7 +31,7 @@ public class UsuarioModificarController {
 	@FXML
 	private ComboBox<Rol> rolModifUsuComboBox;
 	@FXML
-	private Button modificarModifUsuButton, cancelarModifUsuButton;
+	private Button modificarModifUsuButton, cancelarModifUsuButton, restablecerButton;
 
 	@FXML
 	private void initialize() {
@@ -94,5 +94,10 @@ public class UsuarioModificarController {
 		nombreUsuModifUsuText.setText(usuario.getUsuario());
 		contraseniaModifUsuText.setText(usuario.getPassword());
 		rolModifUsuComboBox.setValue(usuario.getRol());
+	}
+	
+	@FXML
+	private void onRestablecerButton(){
+		contraseniaModifUsuText.setText(nombreUsuModifUsuText.getText());
 	}
 }

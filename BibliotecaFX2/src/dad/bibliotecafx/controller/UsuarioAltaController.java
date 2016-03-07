@@ -2,17 +2,12 @@ package dad.bibliotecafx.controller;
 
 import java.util.Optional;
 import java.util.Random;
-
-import org.apache.poi.ss.formula.udf.UDFFinder;
-
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -28,7 +23,6 @@ import javafx.scene.control.TextInputDialog;
 public class UsuarioAltaController {
 
 	private Main main;
-	private StringProperty usuario;
 
 	// INSERTAR USUARIO
 	@FXML
@@ -45,19 +39,30 @@ public class UsuarioAltaController {
 
 	@FXML
 	private void initialize() {
-		usuario = new SimpleStringProperty();
 		nombreUsuText.textProperty().addListener(new ChangeListener<String>() {
 		    @Override
 		    public void changed(ObservableValue<? extends String> observable,
 		            String oldValue, String newValue) {
-		    	nombreUsuarioUsuText.setText(newValue);
+		    	nombreUsuarioUsuText.setText(newValue.toLowerCase());
 		    }
-//		    @Override
-//		    protected void finalize() throws Throwable {
-//		    	Random rnd = new Random();
-//		    	nombreUsuarioUsuText.appendText(String.valueOf(rnd.nextInt(100)));
-//		    }
-		});
+		});		
+		nombreUsuText.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (!newValue.booleanValue()) {
+                	Random rnd = new Random();
+                	nombreUsuarioUsuText.setText(nombreUsuarioUsuText.getText()+rnd.nextInt(100));
+//                	contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
+                } 
+            }
+        });
+		nombreUsuarioUsuText.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(ObservableValue<? extends String> observable,
+		            String oldValue, String newValue) {
+		    	contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
+		    }
+		});		
 	}
 
 	@FXML

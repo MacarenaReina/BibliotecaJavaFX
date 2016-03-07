@@ -63,18 +63,18 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		DataBase.connect();
-		Rol rolAdmin = new Rol();
-		rolAdmin.setTipo("Administrador");
+
 		try {
-			if(!ServiceLocator.getRolService().crearRol(rolAdmin.toItem())){
-				rolAdmin.setCodigo(1);
-				Usuario usuarioAdmin = new Usuario();
-				usuarioAdmin.setNombre("admin");
-				usuarioAdmin.setUsuario("admin");
-				usuarioAdmin.setPassword("admin");
-				usuarioAdmin.setRol(rolAdmin);
-				ServiceLocator.getUsuarioService().crearUsuario(usuarioAdmin.toItem());
-			}
+			Rol rolAdmin = new Rol();
+			rolAdmin.setTipo("Administrador");
+			ServiceLocator.getRolService().crearRol(rolAdmin.toItem());
+			rolAdmin.setCodigo(1);
+			Usuario usuarioAdmin = new Usuario();
+			usuarioAdmin.setNombre("admin");
+			usuarioAdmin.setUsuario("admin");
+			usuarioAdmin.setPassword("admin");
+			usuarioAdmin.setRol(rolAdmin);
+			ServiceLocator.getUsuarioService().crearUsuario(usuarioAdmin.toItem());
 		} catch (ServiceException e2) {
 			e2.printStackTrace();
 		}
@@ -91,7 +91,7 @@ public class Main extends Application {
 			e1.printStackTrace();
 		}
 
-		actualizarRoles();
+//		actualizarRoles();
 
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("BibliotecaFX - Macarena y Joyce");
@@ -161,7 +161,7 @@ public class Main extends Application {
 			}
 		});
 	}
-	
+
 	public void showBibliotecaLoginScene() throws IOException {
 		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaLogin.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
@@ -173,7 +173,7 @@ public class Main extends Application {
 
 		BibliotecaLoginController controller = ((BibliotecaLoginController) loader.getController());
 		controller.setMain(this);
-		
+
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
 	}
@@ -183,7 +183,7 @@ public class Main extends Application {
 		FXMLLoader loader = new FXMLLoader(url);
 
 		Scene scene = new Scene(loader.load());
-		
+
 		this.usuarioLogged = usuarioLogged;
 
 		BibliotecaPrincipalController controller = ((BibliotecaPrincipalController) loader.getController());
@@ -192,8 +192,8 @@ public class Main extends Application {
 		controller.setFilterUsuarios(getUsuariosData());
 		controller.setFilterPrestamos(getPrestamosData());
 		controller.setFilterSanciones(getSancionesData());
-//		controller.setUsuarioLogged(usuarioLogged);
-		
+		// controller.setUsuarioLogged(usuarioLogged);
+
 		this.primaryStage.setScene(scene);
 		this.primaryStage.setResizable(true);
 		this.primaryStage.setMaximized(true);
@@ -343,7 +343,7 @@ public class Main extends Application {
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
-	
+
 	public void showModificarSancionScene(Sancion sancion) throws IOException {
 		stage = new Stage();
 		stage.setTitle("Modificar sanción");
@@ -423,7 +423,7 @@ public class Main extends Application {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	private void actualizarLibros() {
 		librosData = FXCollections.observableArrayList();
 		try {
@@ -515,8 +515,8 @@ public class Main extends Application {
 	public Stage getPrimaryStage() {
 		return this.primaryStage;
 	}
-	
-	public Usuario getUsuarioLogged(){
+
+	public Usuario getUsuarioLogged() {
 		return usuarioLogged;
 	}
 
