@@ -79,6 +79,5 @@ public class Sancion {
 		s.setFechaFinalizacion(getFechaFinalizacion());
 		s.setPrestamo(getPrestamo().toItem());		
 		return s;
-	}
-	
+	}	
 }

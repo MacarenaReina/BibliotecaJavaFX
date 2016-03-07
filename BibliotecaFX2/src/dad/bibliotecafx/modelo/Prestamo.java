@@ -119,11 +119,10 @@ public class Prestamo {
 		}
 		p.setLibro(libros);
 		return p;
-	}
+	}	
 	
 	@Override
 	public String toString() {
-		return getUsuario().getNombre();
+		return String.valueOf(codigo.get());
 	}
-	
 }

@@ -14,7 +14,9 @@
           <Menu fx:id="OpcionesMenu" text="Opciones">
             <items>
                   <MenuItem fx:id="gestionRolesMenuItem" mnemonicParsing="false" onAction="#gestionRoles" text="Gestión de Roles" />
-                  <MenuItem mnemonicParsing="false" onAction="#gestionConfiguraciones" text="Configuraciones" />
+                  <MenuItem fx:id="gestConfigMenuItem" mnemonicParsing="false" onAction="#gestionConfiguraciones" text="Configuraciones" />
+                  <MenuItem fx:id="editarMisDatosMenuItem" mnemonicParsing="false" onAction="#onEditarMisDatosMenuItem" text="Editar mis datos de usuario" />
+                  <MenuItem fx:id="cambiarUsuarioMenuItem" mnemonicParsing="false" onAction="#onCambiarUsuario" text="Cambiar de usuario" />
               <MenuItem mnemonicParsing="false" onAction="#salir" text="Salir" />
             </items>
                <accelerator>
@@ -46,6 +48,7 @@
                                     <TableColumn fx:id="isbnTableColumn" prefWidth="100.0" text="ISBN" />
                                     <TableColumn fx:id="tituloTableColumn" prefWidth="103.0" text="Título" />
                                     <TableColumn fx:id="autorTableColumn" prefWidth="136.0" text="Autor" />
+                                    <TableColumn fx:id="editorialTableColumn" prefWidth="75.0" text="Editorial" />
                                     <TableColumn fx:id="anioTableColumn" prefWidth="75.0" text="Año de publicacion" />
                                     <TableColumn fx:id="ejemplaresBiblioTableColumn" prefWidth="75.0" text="Ejemplares en biblioteca" />
                                  </columns>
@@ -253,6 +256,7 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                                  <columns>
+                                    <TableColumn fx:id="codPrestamoColumn" prefWidth="75.0" text="Código del préstamo" />
                                    <!--  <TableColumn fx:id="prestamoSancionTableColumn" prefWidth="113.0" text="Préstamo" /> -->
                                     <TableColumn fx:id="usuarioSancionTableColumn" prefWidth="186.0" text="Usuario" />
                                     <TableColumn fx:id="fechainiSancionTableColumn" prefWidth="75.0" text="Fecha de inicio" />

@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
@@ -18,7 +19,7 @@ import javafx.scene.control.Alert.AlertType;
 public class UsuarioModificarController {
 
 	private Main main;
-	private Usuario usuario;
+	private Usuario usuario, usuarioLogged;
 
 	@FXML
 	private TextField nombreModifUsuText;
@@ -32,6 +33,8 @@ public class UsuarioModificarController {
 	private ComboBox<Rol> rolModifUsuComboBox;
 	@FXML
 	private Button modificarModifUsuButton, cancelarModifUsuButton, restablecerButton;
+	@FXML
+	private Label rolEtiqueta;
 
 	@FXML
 	private void initialize() {
@@ -69,8 +72,10 @@ public class UsuarioModificarController {
 		main.getStage().close();
 	}
 
-	public void setMain(Main main) {
+	public void setMain(Main main, Usuario usuarioLogged) {
 		this.main = main;
+		this.usuarioLogged = usuarioLogged;
+		ocultarDatos();
 	}
 
 	public void setRolesData(ObservableList<Rol> roles) {
@@ -95,9 +100,17 @@ public class UsuarioModificarController {
 		contraseniaModifUsuText.setText(usuario.getPassword());
 		rolModifUsuComboBox.setValue(usuario.getRol());
 	}
-	
+
 	@FXML
-	private void onRestablecerButton(){
+	private void onRestablecerButton() {
 		contraseniaModifUsuText.setText(nombreUsuModifUsuText.getText());
+	}
+
+	private void ocultarDatos() {
+		if (usuarioLogged.getRol().getTipo().equals("Bibliotecario")
+				|| usuarioLogged.getRol().getTipo().equals("Lector")) {
+			rolModifUsuComboBox.setVisible(false);
+			rolEtiqueta.setVisible(false);
+		}
 	}
 }

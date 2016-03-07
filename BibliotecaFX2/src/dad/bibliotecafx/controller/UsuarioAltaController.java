@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -23,6 +24,8 @@ import javafx.scene.control.TextInputDialog;
 public class UsuarioAltaController {
 
 	private Main main;
+	private Usuario usuarioLogged;
+	Rol rol;
 
 	// INSERTAR USUARIO
 	@FXML
@@ -33,6 +36,8 @@ public class UsuarioAltaController {
 	private ComboBox<Rol> rolUsuComboBox;
 	@FXML
 	private Button nuevoRolButton, insertarUsuButton, cancelarUsuButton;
+	@FXML
+	private Label rolEtiqueta;
 
 	public UsuarioAltaController() {
 	}
@@ -86,9 +91,9 @@ public class UsuarioAltaController {
 				e.printStackTrace();
 			}
 
-			ObservableList<Rol> roles = main.getRolesData();
-			rolUsuComboBox.setItems(roles);
-			rolUsuComboBox.setValue(roles.get(0));
+//			ObservableList<Rol> roles = main.getRolesData();
+			rolUsuComboBox.setItems(main.getRolesData());			
+			rolUsuComboBox.setValue(main.getRolesData().get(0));
 		}
 	}
 
@@ -98,7 +103,7 @@ public class UsuarioAltaController {
 		String apellidos = apellidoUsuText.getText();
 		String nombreUsuario = nombreUsuarioUsuText.getText();
 		String contrasenia = contraseniaUsuText.getCharacters().toString();
-		Rol rol = rolUsuComboBox.getValue();
+		rol = rolUsuComboBox.getSelectionModel().getSelectedItem();
 
 		if (nombre.isEmpty() || apellidos.isEmpty() || nombreUsuario.isEmpty() || contrasenia.isEmpty()
 				|| rol.equals(null)) {
@@ -132,7 +137,6 @@ public class UsuarioAltaController {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	@FXML
@@ -142,10 +146,26 @@ public class UsuarioAltaController {
 
 	public void setRolesData(ObservableList<Rol> roles) {
 		rolUsuComboBox.setItems(roles);
-		rolUsuComboBox.setValue(roles.get(0));
+		Rol r = null;
+		for (Rol rol : roles) {
+			if(rol.getTipo().equals("Lector")){
+				r = rol;
+			}
+		}
+		rolUsuComboBox.setValue(r);
 	}
 
-	public void setMain(Main main) {
+	public void setMain(Main main, Usuario usuario) {
 		this.main = main;
+		this.usuarioLogged = usuario;
+		ocultarDatos();
+	}
+
+	private void ocultarDatos() {
+		if(usuarioLogged.getRol().getTipo().equals("Bibliotecario")){
+			nuevoRolButton.setVisible(false);
+			rolUsuComboBox.setVisible(false);
+			rolEtiqueta.setVisible(false);
+		}
 	}
 }

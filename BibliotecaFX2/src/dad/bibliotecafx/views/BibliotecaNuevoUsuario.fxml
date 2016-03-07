@@ -61,7 +61,7 @@
                </GridPane.margin>
             </Label>
            
-            <Label text="Rol:" GridPane.rowIndex="4">
+            <Label fx:id="rolEtiqueta" text="Rol:" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
