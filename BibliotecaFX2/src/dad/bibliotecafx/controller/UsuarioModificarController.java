@@ -1,6 +1,5 @@
 package dad.bibliotecafx.controller;
 
-
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Rol;
@@ -17,10 +16,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 
 public class UsuarioModificarController {
-	
+
 	private Main main;
 	private Usuario usuario;
-	
+
 	@FXML
 	private TextField nombreModifUsuText;
 	@FXML
@@ -33,23 +32,24 @@ public class UsuarioModificarController {
 	private ComboBox<Rol> rolModifUsuComboBox;
 	@FXML
 	private Button modificarModifUsuButton, cancelarModifUsuButton;
-		
+
 	@FXML
 	private void initialize() {
 		nombreModifUsuText.requestFocus();
+		nombreUsuModifUsuText.setEditable(false);
 	}
-	
-	public UsuarioModificarController(){
-		
+
+	public UsuarioModificarController() {
+
 	}
-	
+
 	@FXML
 	private void onModificarModifUsuButton() {
-		usuario.setNombre(nombreModifUsuText.getText()+" "+apellidosModifUsuText.getText());
+		usuario.setNombre(nombreModifUsuText.getText() + " " + apellidosModifUsuText.getText());
 		usuario.setUsuario(nombreUsuModifUsuText.getText());
 		usuario.setPassword(contraseniaModifUsuText.getText());
-		usuario.setRol(rolModifUsuComboBox.getValue());
-		
+		usuario.setRol(rolModifUsuComboBox.getSelectionModel().getSelectedItem());
+
 		try {
 			ServiceLocator.getUsuarioService().actualizarUsuario(usuario.toItem());
 			main.getStage().close();
@@ -63,36 +63,36 @@ public class UsuarioModificarController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@FXML
 	private void onCancelarModifUsuButton() {
 		main.getStage().close();
 	}
-	
+
 	public void setMain(Main main) {
 		this.main = main;
 	}
-	
-	public void setRolesData(ObservableList<Rol> roles){
+
+	public void setRolesData(ObservableList<Rol> roles) {
 		rolModifUsuComboBox.setItems(roles);
 	}
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
-		
-		String [] usuarioArray = usuario.getNombre().split(" ");
-		if(usuarioArray.length >= 1) {
+
+		String[] usuarioArray = usuario.getNombre().split(" ");
+		if (usuarioArray.length >= 1) {
 			nombreModifUsuText.setText(usuarioArray[0]);
 			nombreModifUsuText.selectAll();
 			nombreModifUsuText.requestFocus();
 		}
-		if(usuarioArray.length >= 2) {
-			for(int i=1; i< usuarioArray.length; i++) {
-				apellidosModifUsuText.setText(apellidosModifUsuText.getText() + usuarioArray[i]+ " ");
+		if (usuarioArray.length >= 2) {
+			for (int i = 1; i < usuarioArray.length; i++) {
+				apellidosModifUsuText.setText(apellidosModifUsuText.getText() + usuarioArray[i] + " ");
 			}
 		}
 		nombreUsuModifUsuText.setText(usuario.getUsuario());
 		contraseniaModifUsuText.setText(usuario.getPassword());
 		rolModifUsuComboBox.setValue(usuario.getRol());
-	}	
+	}
 }

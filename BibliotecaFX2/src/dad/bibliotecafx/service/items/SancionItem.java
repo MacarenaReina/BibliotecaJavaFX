@@ -8,7 +8,6 @@ import dad.bibliotecafx.service.entidades.SancionEntity;
 public class SancionItem {
 	
 	private PrestamoItem prestamo;
-//	private LibroItem libro;
 	private Date fechaAlta;
 	private Date fechaFinalizacion;
 	
@@ -19,14 +18,6 @@ public class SancionItem {
 	public void setPrestamo(PrestamoItem prestamo) {
 		this.prestamo = prestamo;
 	}
-
-//	public LibroItem getLibro() {
-//		return libro;
-//	}
-//
-//	public void setLibro(LibroItem libro) {
-//		this.libro = libro;
-//	}
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -48,7 +39,6 @@ public class SancionItem {
 		SancionEntity se = new SancionEntity();		
 		se.setFechaAlta(getFechaAlta());
 		se.setFechaFinalizacion(getFechaFinalizacion());
-//		se.setLibro(getLibro().toEntity());
 		se.setPrestamo(getPrestamo().toEntity());
 		return se;
 	}
@@ -57,7 +47,6 @@ public class SancionItem {
 		Sancion se = new Sancion();		
 		se.setFechaAlta(getFechaAlta());
 		se.setFechaFinalizacion(getFechaFinalizacion());
-//		se.setLibro(getLibro().toModel());
 		se.setPrestamo(getPrestamo().toModel());
 		return se;
 	}	

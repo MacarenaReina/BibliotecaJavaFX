@@ -19,8 +19,6 @@ public class Usuario {
 	private final StringProperty nombre = new SimpleStringProperty(this, "nombre");
 	private final StringProperty usuario = new SimpleStringProperty(this, "usuario");
 	private final StringProperty password = new SimpleStringProperty(this, "password");
-//	private final SetProperty<Rol> rol = new SimpleSetProperty<Rol>(
-//			FXCollections.observableSet(new HashSet<Rol>()));
 	private final ListProperty<Prestamo> prestamos = new SimpleListProperty<Prestamo>(
 			FXCollections.observableArrayList(new ArrayList<Prestamo>()));
 	private ObjectProperty<Rol> rol = new SimpleObjectProperty<Rol>();

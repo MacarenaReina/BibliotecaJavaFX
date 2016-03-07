@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import dad.bibliotecafx.service.items.LibroItem;
@@ -28,7 +27,6 @@ public class PrestamoEntity implements Serializable {
 	@Id
 	@GeneratedValue
 	private Long codigo;
-//	@OneToMany(fetch=FetchType.LAZY)
 	@ManyToMany(fetch =FetchType.LAZY)  
 	@JoinTable(name="Prestamo_Libro", joinColumns=@JoinColumn(name="codPrestamo"), inverseJoinColumns=@JoinColumn(name="ISBN")) 
 	private Set<LibroEntity> libro = new HashSet<LibroEntity>();

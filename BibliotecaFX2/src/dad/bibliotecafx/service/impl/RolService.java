@@ -28,17 +28,37 @@ public class RolService implements IRolService {
 	}
 
 	@Override
-	public void crearRol(RolItem rol) throws ServiceException {
+	public boolean crearRol(RolItem rol) throws ServiceException {
+		boolean yaExiste = false;
 		DataBase.begin();
-		DataBase.getSession().save(rol.toEntity());
+		Long registros;
+		registros = (Long)(DataBase.getSession().createQuery("SELECT COUNT (*) FROM RolEntity WHERE tipo = :tipo").setString("tipo", rol.getTipo()).uniqueResult());
 		DataBase.commit();
+		if(registros == 0){
+			DataBase.begin();
+			DataBase.getSession().save(rol.toEntity());
+			DataBase.commit();
+		} else{
+			yaExiste = true;
+		}
+		return yaExiste;
 	}
 
 	@Override
-	public void actualizarRol(RolItem rol) throws ServiceException {
+	public boolean actualizarRol(RolItem rol) throws ServiceException {		
+		boolean yaExiste = false;
 		DataBase.begin();
-		DataBase.getSession().update(DataBase.getSession().merge(rol.toEntity()));
+		Long registros;
+		registros = (Long)(DataBase.getSession().createQuery("SELECT COUNT (*) FROM RolEntity WHERE tipo = :tipo").setString("tipo", rol.getTipo()).uniqueResult());
 		DataBase.commit();
+		if(registros == 0){
+			DataBase.begin();
+			DataBase.getSession().update(DataBase.getSession().merge(rol.toEntity()));
+			DataBase.commit();
+		} else{
+			yaExiste = true;
+		}
+		return yaExiste;
 	}
 
 	@Override

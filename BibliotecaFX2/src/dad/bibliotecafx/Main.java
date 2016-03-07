@@ -10,12 +10,15 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
+import dad.bibliotecafx.controller.BibliotecaLoginController;
 import dad.bibliotecafx.controller.BibliotecaPrincipalController;
 import dad.bibliotecafx.controller.DevolucionPrestamoController;
 import dad.bibliotecafx.controller.GestionConfiguracionesController;
 import dad.bibliotecafx.controller.GestionRolesController;
 import dad.bibliotecafx.controller.PrestamoInsertarController;
+import dad.bibliotecafx.controller.PrestamoModificarController;
 import dad.bibliotecafx.controller.SancionInsertarController;
+import dad.bibliotecafx.controller.SancionModificarController;
 import dad.bibliotecafx.controller.UsuarioAltaController;
 import dad.bibliotecafx.controller.UsuarioModificarController;
 import dad.bibliotecafx.db.DataBase;
@@ -46,6 +49,7 @@ import javafx.stage.WindowEvent;
 public class Main extends Application {
 
 	private Stage primaryStage, stage;
+	private Usuario usuarioLogged;
 
 	private Properties property;
 	private Integer diasPrestamo, diasSancion;
@@ -59,6 +63,21 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		DataBase.connect();
+		Rol rolAdmin = new Rol();
+		rolAdmin.setTipo("Administrador");
+		try {
+			if(!ServiceLocator.getRolService().crearRol(rolAdmin.toItem())){
+				rolAdmin.setCodigo(1);
+				Usuario usuarioAdmin = new Usuario();
+				usuarioAdmin.setNombre("admin");
+				usuarioAdmin.setUsuario("admin");
+				usuarioAdmin.setPassword("admin");
+				usuarioAdmin.setRol(rolAdmin);
+				ServiceLocator.getUsuarioService().crearUsuario(usuarioAdmin.toItem());
+			}
+		} catch (ServiceException e2) {
+			e2.printStackTrace();
+		}
 		property = new Properties();
 		try {
 			property.load(Main.class.getResourceAsStream("/dad/bibliotecafx/config/config.properties"));
@@ -76,16 +95,16 @@ public class Main extends Application {
 
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("BibliotecaFX - Macarena y Joyce");
-		this.primaryStage.setMaximized(true);
 		this.primaryStage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
 		try {
-			showBibliotecaScene();
-		} catch (IOException e) {
+			showBibliotecaLoginScene();
+		} catch (IOException e2) {
+			e2.printStackTrace();
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setContentText("Ha ocurrido un error al iniciar la aplicación");
 			alert.showAndWait();
-			e.printStackTrace();
+			e2.printStackTrace();
 		}
 
 		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -142,28 +161,30 @@ public class Main extends Application {
 			}
 		});
 	}
+	
+	public void showBibliotecaLoginScene() throws IOException {
+		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaLogin.fxml");
+		FXMLLoader loader = new FXMLLoader(url);
+		this.primaryStage.setWidth(300);
+		this.primaryStage.setHeight(200);
+		this.primaryStage.setResizable(false);
 
-	private void actualizarLibros() {
-		librosData = FXCollections.observableArrayList();
-		try {
-			List<LibroItem> librosList = ServiceLocator.getLibroService().listarLibros();
-			for (LibroItem libroItem : librosList) {
-				librosData.add(libroItem.toModel());
-			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar los libros");
-			alert.showAndWait();
-			e1.printStackTrace();
-		}
+		Scene scene = new Scene(loader.load());
+
+		BibliotecaLoginController controller = ((BibliotecaLoginController) loader.getController());
+		controller.setMain(this);
+		
+		this.primaryStage.setScene(scene);
+		this.primaryStage.show();
 	}
 
-	private void showBibliotecaScene() throws IOException {
+	public void showBibliotecaScene(Usuario usuarioLogged) throws IOException {
 		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaUI.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
 
 		Scene scene = new Scene(loader.load());
+		
+		this.usuarioLogged = usuarioLogged;
 
 		BibliotecaPrincipalController controller = ((BibliotecaPrincipalController) loader.getController());
 		controller.setMain(this);
@@ -171,8 +192,12 @@ public class Main extends Application {
 		controller.setFilterUsuarios(getUsuariosData());
 		controller.setFilterPrestamos(getPrestamosData());
 		controller.setFilterSanciones(getSancionesData());
-		primaryStage.setScene(scene);
-		primaryStage.show();
+//		controller.setUsuarioLogged(usuarioLogged);
+		
+		this.primaryStage.setScene(scene);
+		this.primaryStage.setResizable(true);
+		this.primaryStage.setMaximized(true);
+		this.primaryStage.show();
 	}
 
 	public void showNuevoUsuarioScene() throws IOException {
@@ -284,8 +309,6 @@ public class Main extends Application {
 		stage = new Stage();
 		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
 		stage.setTitle("Gestión de Roles");
-		stage.setWidth(800);
-		stage.setHeight(500);
 
 		URL url = getClass().getResource("views/BibliotecaGestionRoles.fxml");
 		FXMLLoader loader = new FXMLLoader();
@@ -295,7 +318,6 @@ public class Main extends Application {
 
 		GestionRolesController controller = ((GestionRolesController) loader.getController());
 		controller.setMain(this);
-		// controller.setRolesData(getRolesData());
 
 		stage.setScene(scene);
 		stage.showAndWait();
@@ -317,8 +339,46 @@ public class Main extends Application {
 
 		SancionInsertarController controller = ((SancionInsertarController) loader.getController());
 		controller.setMain(this);
-//		controller.setPrestamosData(getPrestamosData());
 
+		stage.setScene(scene);
+		stage.showAndWait();
+	}
+	
+	public void showModificarSancionScene(Sancion sancion) throws IOException {
+		stage = new Stage();
+		stage.setTitle("Modificar sanción");
+		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
+		stage.setResizable(false);
+
+		URL url = getClass().getResource("views/BibliotecaModificarSancion.fxml");
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(url);
+
+		Scene scene = new Scene(loader.load());
+
+		SancionModificarController controller = ((SancionModificarController) loader.getController());
+		controller.setMain(this);
+		controller.setSancion(sancion);
+
+		stage.setScene(scene);
+		stage.showAndWait();
+	}
+
+	public void showModificarPrestamoScene(Prestamo prestamo) throws IOException {
+		stage = new Stage();
+		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
+		stage.setTitle("Configuración");
+		stage.setResizable(false);
+
+		URL url = getClass().getResource("views/BibliotecaModificarPrestamo.fxml");
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(url);
+
+		Scene scene = new Scene(loader.load());
+
+		PrestamoModificarController controller = ((PrestamoModificarController) loader.getController());
+		controller.setMain(this);
+		controller.setPrestamo(prestamo);
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
@@ -359,6 +419,22 @@ public class Main extends Application {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setContentText("Ha ocurrido un error al actualizar los usuarios");
+			alert.showAndWait();
+			e1.printStackTrace();
+		}
+	}
+	
+	private void actualizarLibros() {
+		librosData = FXCollections.observableArrayList();
+		try {
+			List<LibroItem> librosList = ServiceLocator.getLibroService().listarLibros();
+			for (LibroItem libroItem : librosList) {
+				librosData.add(libroItem.toModel());
+			}
+		} catch (ServiceException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al actualizar los libros");
 			alert.showAndWait();
 			e1.printStackTrace();
 		}
@@ -438,6 +514,10 @@ public class Main extends Application {
 
 	public Stage getPrimaryStage() {
 		return this.primaryStage;
+	}
+	
+	public Usuario getUsuarioLogged(){
+		return usuarioLogged;
 	}
 
 	public static void main(String[] args) {

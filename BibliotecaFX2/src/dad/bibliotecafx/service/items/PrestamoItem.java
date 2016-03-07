@@ -1,9 +1,7 @@
 package dad.bibliotecafx.service.items;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import dad.bibliotecafx.modelo.Libro;
@@ -11,7 +9,6 @@ import dad.bibliotecafx.modelo.Prestamo;
 import dad.bibliotecafx.service.entidades.LibroEntity;
 import dad.bibliotecafx.service.entidades.PrestamoEntity;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
 public class PrestamoItem {

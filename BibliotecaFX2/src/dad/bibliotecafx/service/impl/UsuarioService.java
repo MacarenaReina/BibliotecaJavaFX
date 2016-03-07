@@ -13,17 +13,16 @@ import dad.bibliotecafx.service.items.UsuarioItem;
 
 public class UsuarioService implements IUsuarioService {
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<UsuarioItem> listarTodosUsuarios() throws ServiceException {
 		DataBase.begin();
 		Query consultaUsuarios = DataBase.getSession().createQuery("FROM UsuarioEntity");
-		List<UsuarioEntity> usuariosList = consultaUsuarios.list();		
+		List<UsuarioEntity> usuariosList = consultaUsuarios.list();
 		List<UsuarioItem> usuarios = new ArrayList<UsuarioItem>();
 		for (UsuarioEntity u : usuariosList) {
 			usuarios.add(u.toItem());
-		}	
+		}
 		DataBase.commit();
 		return usuarios;
 	}
@@ -33,13 +32,15 @@ public class UsuarioService implements IUsuarioService {
 		boolean yaExiste = false;
 		DataBase.begin();
 		Long registros;
-		registros = (Long)(DataBase.getSession().createQuery("SELECT COUNT (*) FROM UsuarioEntity WHERE usuario = :usuario").setString("usuario", usuario.getUsuario()).uniqueResult());
+		registros = (Long) (DataBase.getSession()
+				.createQuery("SELECT COUNT (*) FROM UsuarioEntity WHERE usuario = :usuario")
+				.setString("usuario", usuario.getUsuario()).uniqueResult());
 		DataBase.commit();
-		if(registros == 0){
+		if (registros == 0) {
 			DataBase.begin();
 			DataBase.getSession().save(usuario.toEntity());
 			DataBase.commit();
-		} else{
+		} else {
 			yaExiste = true;
 		}
 		return yaExiste;
@@ -63,13 +64,11 @@ public class UsuarioService implements IUsuarioService {
 	@Override
 	public List<UsuarioItem> listarUsuariosLectores() throws ServiceException {
 		DataBase.begin();
-		
-		Query consultaUsuarios = DataBase.getSession()
-				.createQuery(
-						"FROM UsuarioEntity u  WHERE u.rol.tipo = :tipo")
+
+		Query consultaUsuarios = DataBase.getSession().createQuery("FROM UsuarioEntity u  WHERE u.rol.tipo = :tipo")
 				.setString("tipo", "Lector");
 		List<UsuarioEntity> usuariosList = consultaUsuarios.list();
-		
+
 		List<UsuarioItem> usuarios = new ArrayList<UsuarioItem>();
 		for (UsuarioEntity u : usuariosList) {
 			usuarios.add(u.toItem());
@@ -78,4 +77,14 @@ public class UsuarioService implements IUsuarioService {
 		return usuarios;
 	}
 
+	@Override
+	public UsuarioItem loginCorrecto(String usuario, String password) throws ServiceException {
+		DataBase.begin();
+		UsuarioEntity usu;
+		usu = (UsuarioEntity) (DataBase.getSession()
+				.createQuery("FROM UsuarioEntity WHERE usuario = :usuario AND password = :password")
+				.setString("usuario", usuario).setString("password", password).uniqueResult());
+		DataBase.commit();
+		return usu.toItem();
+	}
 }

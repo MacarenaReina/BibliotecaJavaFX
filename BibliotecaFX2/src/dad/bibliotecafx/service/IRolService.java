@@ -5,7 +5,7 @@ import dad.bibliotecafx.service.items.RolItem;
 
 public interface IRolService {
 	public List<RolItem> listarRoles() throws ServiceException;
-	public void crearRol(RolItem rol) throws ServiceException;
-	public void actualizarRol(RolItem rol) throws ServiceException;
+	public boolean crearRol(RolItem rol) throws ServiceException;
+	public boolean actualizarRol(RolItem rol) throws ServiceException;
 	public void eliminarRol(RolItem rol) throws ServiceException;
 }

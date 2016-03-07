@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
-import antlr.collections.List;
 import dad.bibliotecafx.Main;
 import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Autor;
@@ -16,7 +15,6 @@ import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
 import dad.bibliotecafx.utils.ReportsUtils;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -37,6 +35,7 @@ import net.sf.jasperreports.engine.JRException;
 public class BibliotecaPrincipalController {
 
 	private Main main;
+//	private Usuario usuarioLogged;
 
 	@FXML
 	private Button devolucionButton;
@@ -110,8 +109,6 @@ public class BibliotecaPrincipalController {
 	private Button nuevaSancionButton, eliminarSancionButton, editarSancionButton;
 	@FXML
 	private TableView<Sancion> sancionesTable;
-//	@FXML
-//	private TableColumn<Sancion, Prestamo> prestamoSancionTableColumn;
 	@FXML
 	private TableColumn<Sancion, Prestamo> usuarioSancionTableColumn;
 	@FXML
@@ -151,11 +148,14 @@ public class BibliotecaPrincipalController {
 
 		// Sanciones:
 		sancionesTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-//		prestamoSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().prestamoProperty());
 		usuarioSancionTableColumn.setCellValueFactory(new PropertyValueFactory<Sancion, Prestamo>("prestamo"));
-//		libroSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().libroProperty());
 		fechainiSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaAltaProperty());
 		fechafinSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaFinalizacionProperty());
+		
+//		if(usuarioLogged.getRol().equals("Bibliotecario")){
+//			devolucionButton.setVisible(false);
+//		}
+		
 	}
 
 	// A partir de aquí es de la biblioteca:
@@ -180,7 +180,6 @@ public class BibliotecaPrincipalController {
 					alert.setTitle("Error");
 					alert.setContentText("Ha ocurrido un error al imprimir el carnet");
 					alert.showAndWait();
-					e1.printStackTrace();
 					e1.printStackTrace();
 				}
 			}
@@ -324,7 +323,16 @@ public class BibliotecaPrincipalController {
 			alert.setContentText("Sólo puede modificar un préstamo a la vez");
 			alert.showAndWait();
 		} else {
-			// TODO Editar préstamo
+			try {
+				this.main.showModificarPrestamoScene(prestamosTable.getSelectionModel().getSelectedItem());
+				prestamosTable.setItems(main.getPrestamosData());
+			} catch (IOException e1) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar préstamo.");
+				alert.showAndWait();
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -389,7 +397,6 @@ public class BibliotecaPrincipalController {
 				for (Sancion sancion : sancionesTable.getSelectionModel().getSelectedItems()) {
 					try {
 						ServiceLocator.getSancionService().eliminarSancion(sancion.toItem());
-						sancionesTable.setItems(main.getSancionesData());
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
@@ -400,13 +407,37 @@ public class BibliotecaPrincipalController {
 						e1.printStackTrace();
 					}
 				}
+				sancionesTable.setItems(main.getSancionesData());
 			}
 		}
 	}
 
 	@FXML
 	public void onEditarSancion() {
-		// TODO editar sanción
+		int sancionesSeleccionadas = sancionesTable.getSelectionModel().getSelectedItems().size();
+		if (sancionesSeleccionadas == 0) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Editar sanción");
+			alert.setContentText("Debe seleccionar al menos una sanción");
+			alert.showAndWait();
+		} else if (sancionesSeleccionadas >= 2) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Editar sanción");
+			alert.setContentText("Sólo puede modificar una sanción");
+			alert.showAndWait();
+		} else {
+			try {
+				this.main.showModificarSancionScene(sancionesTable.getSelectionModel().getSelectedItem());
+				prestamosTable.setItems(main.getPrestamosData());
+				sancionesTable.setItems(main.getSancionesData());
+			} catch (IOException e1) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar sanción");
+				alert.showAndWait();
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	// MENÚ - ROLES:
@@ -581,5 +612,9 @@ public class BibliotecaPrincipalController {
 		DataBase.disconnect();
 		main.getPrimaryStage().close();
 	}
+	
+//	public void setUsuarioLogged(Usuario usuario){
+//		this.usuarioLogged = usuario;
+//	}
 
 }

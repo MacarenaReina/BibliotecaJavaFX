@@ -12,7 +12,6 @@ public class UsuarioItem {
 	private String nombre;
 	private String usuario;
 	private String password;
-//	private Set<RolItem> rol = new HashSet<RolItem>();
 	private RolItem rol;
 	private List<PrestamoItem> prestamos = new ArrayList<PrestamoItem>();
 
@@ -48,14 +47,6 @@ public class UsuarioItem {
 		this.password = password;
 	}
 
-//	public Set<RolItem> getRol() {
-//		return rol;
-//	}
-//
-//	public void setRol(Set<RolItem> rol) {
-//		this.rol = rol;
-//	}
-	
 	public List<PrestamoItem> getPrestamos() {
 		return prestamos;
 	}

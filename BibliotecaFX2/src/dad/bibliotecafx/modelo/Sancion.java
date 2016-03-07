@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 public class Sancion {
 	
 	private final ObjectProperty<Prestamo> prestamo = new SimpleObjectProperty<Prestamo>(this, "prestamo");
-//	private final ObjectProperty<Libro> libro = new SimpleObjectProperty<Libro>(this, "libro");
 	private final ObjectProperty<Date> fechaAlta = new SimpleObjectProperty<Date>(this, "fechaAlta");
 	private final ObjectProperty<Date> fechaFinalizacion = new SimpleObjectProperty<Date>(this, "fechaFinalizacion");
 
@@ -24,18 +23,6 @@ public class Sancion {
 	public final void setPrestamo(final dad.bibliotecafx.modelo.Prestamo prestamo) {
 		this.prestamoProperty().set(prestamo);
 	}	
-
-//	public final ObjectProperty<Libro> libroProperty() {
-//		return this.libro;
-//	}	
-//
-//	public final dad.bibliotecafx.modelo.Libro getLibro() {
-//		return this.libroProperty().get();
-//	}	
-//
-//	public final void setLibro(final dad.bibliotecafx.modelo.Libro libro) {
-//		this.libroProperty().set(libro);
-//	}	
 
 	public final ObjectProperty<Date> fechaAltaProperty() {
 		return this.fechaAlta;
@@ -65,7 +52,6 @@ public class Sancion {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-//		result = prime * result + ((libro.get() == null) ? 0 : libro.get().hashCode());
 		result = prime * result + ((prestamo.get() == null) ? 0 : prestamo.get().hashCode());
 		return result;
 	}
@@ -79,11 +65,6 @@ public class Sancion {
 		if (getClass() != obj.getClass())
 			return false;
 		Sancion other = (Sancion) obj;
-//		if (libro.get() == null) {
-//			if (other.libro.get() != null)
-//				return false;
-//		} else if (!libro.get().equals(other.libro.get()))
-//			return false;
 		if (prestamo.get() == null) {
 			if (other.prestamo.get() != null)
 				return false;
@@ -96,7 +77,6 @@ public class Sancion {
 		SancionItem s = new SancionItem();		
 		s.setFechaAlta(getFechaAlta());
 		s.setFechaFinalizacion(getFechaFinalizacion());
-//		s.setLibro(getLibro().toItem());
 		s.setPrestamo(getPrestamo().toItem());		
 		return s;
 	}
