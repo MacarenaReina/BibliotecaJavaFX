@@ -31,10 +31,13 @@ public class LibroEntity implements Serializable {
 	@JoinColumn(name="editorial")
 	private EditorialEntity editorial;
 	@Column(columnDefinition="INTEGER")
-	private Integer anioPublicacion;	
+	private Integer anioPublicacion;
+	@Column(columnDefinition="INTEGER")
+	private Integer cantidad;
 	@ManyToMany(fetch =FetchType.LAZY)  
 	@JoinTable(name="Autor_Libro", joinColumns=@JoinColumn(name="ISBN"), inverseJoinColumns=@JoinColumn(name="codAutor")) 
 	private Set<AutorEntity> autores = new HashSet<AutorEntity>();
+	
 	
 	public String getISBN() {
 		return ISBN;
@@ -76,6 +79,14 @@ public class LibroEntity implements Serializable {
 		return anioPublicacion;
 	}
 	
+	public Integer getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(Integer cantidad) {
+		this.cantidad = cantidad;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -107,6 +118,7 @@ public class LibroEntity implements Serializable {
 		l.setISBN(getISBN());
 		l.setTitulo(getTitulo());
 		l.setAnioPublicacion(getAnioPublicacion());
+		l.setCantidad(getCantidad());
 		Set<AutorItem> autores = new HashSet<AutorItem>();
 		for (AutorEntity autor : getAutores()) {
 			autores.add(autor.toItem());

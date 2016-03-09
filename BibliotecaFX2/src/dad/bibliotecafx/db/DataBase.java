@@ -17,6 +17,9 @@ public class DataBase {
 	}
 	
 	public static void begin() {
+		if(!getSession().isOpen()){
+			connect();
+		}
 		getSession().beginTransaction();		
 	}
 	

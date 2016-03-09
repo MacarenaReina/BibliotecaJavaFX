@@ -6,67 +6,71 @@ import java.util.List;
 import org.hibernate.Query;
 
 import dad.bibliotecafx.db.DataBase;
+import dad.bibliotecafx.modelo.Prestamo;
+import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.IPrestamoService;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.entidades.PrestamoEntity;
 import dad.bibliotecafx.service.entidades.UsuarioEntity;
-import dad.bibliotecafx.service.items.PrestamoItem;
-import dad.bibliotecafx.service.items.UsuarioItem;
-
 public class PrestamoService implements IPrestamoService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PrestamoItem> listarPrestamos() throws ServiceException {
+	public List<Prestamo> getPrestamos() throws ServiceException {
 		DataBase.begin();
 		Query consultaPrestamos = DataBase.getSession().createQuery("FROM PrestamoEntity");
-		List<PrestamoEntity> prestamosList = consultaPrestamos.list();
-		List<PrestamoItem> prestamos = new ArrayList<PrestamoItem>();
-		for (PrestamoEntity p : prestamosList) {
-			prestamos.add(p.toItem());
+		List<PrestamoEntity> prestamosListEntity = consultaPrestamos.list();
+		List<Prestamo> prestamosList = new ArrayList<Prestamo>();
+		for (PrestamoEntity p : prestamosListEntity) {
+			prestamosList.add(p.toItem().toModel());
 		}
 		DataBase.commit();
-		return prestamos;
+		return prestamosList;
 	}
 
 	@Override
-	public void crearPrestamo(PrestamoItem prestamo) throws ServiceException {
+	public void crearPrestamo(Prestamo prestamo) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().save(prestamo.toEntity());
+		DataBase.getSession().save(prestamo.toItem().toEntity());
 		DataBase.commit();
 	}
 
 	@Override
-	public void actualizarPrestamo(PrestamoItem prestamo) throws ServiceException {
+	public void actualizarPrestamo(Prestamo prestamo) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().update(DataBase.getSession().merge(prestamo.toEntity()));
+		DataBase.getSession().update(DataBase.getSession().merge(prestamo.toItem().toEntity()));
 		DataBase.commit();
 	}
 
 	@Override
-	public void eliminarPrestamo(PrestamoItem prestamo) throws ServiceException {
+	public void eliminarPrestamo(Prestamo prestamo) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().delete(prestamo.toEntity());
+		DataBase.getSession().delete(prestamo.toItem().toEntity());
 		DataBase.commit();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PrestamoItem> prestamosPorUsuario(UsuarioItem usuario) throws ServiceException {
-		DataBase.begin();		
+	public List<Prestamo> prestamosPorUsuario(Usuario usuario) throws ServiceException {
+		DataBase.begin();
 		List<UsuarioEntity> usuariosList = new ArrayList<UsuarioEntity>();
-		usuariosList.add(usuario.toEntity());
-		Query consultaPrestamos = DataBase.getSession()
-				.createQuery(
-						"FROM PrestamoEntity WHERE usuario IN :usuarios");
+		usuariosList.add(usuario.toItem().toEntity());
+		Query consultaPrestamos = DataBase.getSession().createQuery("FROM PrestamoEntity WHERE usuario IN :usuarios");
 		consultaPrestamos.setParameterList("usuarios", usuariosList);
 		List<PrestamoEntity> prestamosList = consultaPrestamos.list();
-		List<PrestamoItem> prestamos = new ArrayList<PrestamoItem>();
+		List<Prestamo> prestamos = new ArrayList<Prestamo>();
 		for (PrestamoEntity p : prestamosList) {
-			prestamos.add(p.toItem());
+			prestamos.add(p.toItem().toModel());
 		}
 		DataBase.commit();
 		return prestamos;
 	}
+
+//	private Long getUltimoId() {
+//		Long lastId;
+//		lastId = ((BigInteger) DataBase.getSession().createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult())
+//				.longValue();
+//		return lastId;
+//	}
 
 }

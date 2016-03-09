@@ -2,13 +2,13 @@ package dad.bibliotecafx.service;
 
 import java.util.List;
 
-import dad.bibliotecafx.service.items.SancionItem;
-import dad.bibliotecafx.service.items.UsuarioItem;
+import dad.bibliotecafx.modelo.Sancion;
+import dad.bibliotecafx.modelo.Usuario;
 
 public interface ISancionService {
-	public List<SancionItem> listarSanciones() throws ServiceException;
-	public void crearSancion(SancionItem sancion) throws ServiceException;
-	public void actualizarSancion(SancionItem sancion) throws ServiceException;
-	public void eliminarSancion(SancionItem sancion) throws ServiceException;
-	public List<SancionItem> listarSancionesPorUsuario(UsuarioItem usuario) throws ServiceException;
+	public List<Sancion> getSanciones() throws ServiceException;
+	public void crearSancion(Sancion sancion) throws ServiceException;
+	public void actualizarSancion(Sancion sancion) throws ServiceException;
+	public void eliminarSancion(Sancion sancion) throws ServiceException;
+	public List<Sancion> listarSancionesPorUsuario(Usuario usuario) throws ServiceException;
 }

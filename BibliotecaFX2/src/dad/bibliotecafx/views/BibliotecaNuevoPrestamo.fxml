@@ -1,48 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.PrestamoInsertarController">
+<BorderPane prefHeight="400.0" prefWidth="600.0" stylesheets="@BibliotecaStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.PrestamoInsertarController">
    <bottom>
       <FlowPane alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
          <children>
-            <Button fx:id="siguientePrestButton" mnemonicParsing="false" onAction="#onSiguientePrestButton" text="Siguiente">
+            <Button fx:id="atrasPrestButton" mnemonicParsing="false" onAction="#onAtrasPrestButton" >
                <FlowPane.margin>
                   <Insets right="10.0" />
                </FlowPane.margin>
             </Button>
-            <Button fx:id="atrasPrestButton" mnemonicParsing="false" onAction="#onAtrasPrestButton" text="Atrás" />
+            <Button fx:id="siguientePrestButton" mnemonicParsing="false" onAction="#onSiguientePrestButton" >
+               <FlowPane.margin>
+                  <Insets right="10.0" />
+               </FlowPane.margin>
+            </Button>
+            <Button fx:id="finalizarPresButton" mnemonicParsing="false" onAction="#onFinalizarPresButton"  />
          </children>
-         <padding>
-            <Insets bottom="10.0" right="10.0" top="10.0" />
-         </padding>
       </FlowPane>
    </bottom>
    <center>
-      <StackPane fx:id="prestamoStackPane" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="usuariosPrestTable" prefHeight="200.0" prefWidth="200.0">
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-               <columns>
-                  <TableColumn fx:id="nombrePrestTableColum" prefWidth="75.0" text="Usuario" />
-                  <TableColumn fx:id="rolPrestTableColumn" prefWidth="75.0" text="Rol" />
-               </columns>
-            </TableView>
-            <TableView fx:id="librosPrestTable" prefHeight="200.0" prefWidth="200.0" visible="false">
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-               <columns>
-                  <TableColumn fx:id="tituloPrestTableColumn" prefWidth="75.0" text="Título" />
-                  <TableColumn fx:id="autorPrestTableColumn" prefWidth="75.0" text="Autor" />
-                  <TableColumn fx:id="anioPrestTableColumn" prefWidth="75.0" text="Año de publicacion" />
-               </columns>
-            </TableView>
+            <BorderPane fx:id="usuariosBorderPane" prefHeight="200.0" prefWidth="200.0">
+               <top>
+                  <FlowPane fx:id="panelFechaYUsuario" prefHeight="32.0" prefWidth="590.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <TextField fx:id="buscarUsuarioText" prefHeight="25.0" prefWidth="142.0" promptText="Buscar usuario...">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                        </TextField>
+                        <Label fx:id="fechaPrestamoLabel" text="Fecha del préstamo:">
+                           <FlowPane.margin>
+                              <Insets right="10.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <DatePicker fx:id="datePicker" prefHeight="25.0" prefWidth="150.0" promptText="Fecha del préstamo">
+                           <FlowPane.margin>
+                              <Insets right="5.0" />
+                           </FlowPane.margin>
+                        </DatePicker>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </BorderPane.margin>
+                  </FlowPane>
+               </top>
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+               <center>
+                  <TableView fx:id="usuariosPrestTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <columns>
+                        <TableColumn fx:id="nombrePrestTableColum" prefWidth="75.0" text="Usuario" />
+                        <TableColumn fx:id="rolPrestTableColumn" prefWidth="75.0" text="Rol" />
+                     </columns>
+                  </TableView>
+               </center>
+            </BorderPane>
+            <BorderPane fx:id="librosBorderPane" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <top>
+                  <FlowPane fx:id="panelFechaYUsuario1" prefHeight="32.0" prefWidth="590.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <TextField fx:id="buscarLibroText" prefHeight="25.0" prefWidth="146.0" promptText="Buscar libro...">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+                           </FlowPane.margin>
+                        </TextField>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </BorderPane.margin>
+                  </FlowPane>
+               </top>
+               <center>
+                  <TableView fx:id="librosPrestTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <columns>
+                        <TableColumn fx:id="tituloPrestTableColumn" prefWidth="75.0" text="Título" />
+                        <TableColumn fx:id="autorPrestTableColumn" prefWidth="75.0" text="Autor" />
+                        <TableColumn fx:id="anioPrestTableColumn" prefWidth="75.0" text="Año de publicacion" />
+                     </columns>
+                  </TableView>
+               </center>
+            </BorderPane>
             <ScrollPane fx:id="prestamoScrollPane" fitToHeight="true" fitToWidth="true" visible="false">
                <content>
                   <TextArea fx:id="prestamosTextArea" editable="false" text="Libro:&#10;Usuario:&#10;" visible="false" wrapText="true" />
@@ -51,16 +105,4 @@
          </children>
       </StackPane>
    </center>
-   <top>
-      <FlowPane prefHeight="25.0" prefWidth="574.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label text="Fecha del préstamo:">
-               <FlowPane.margin>
-                  <Insets right="10.0" />
-               </FlowPane.margin>
-            </Label>
-            <DatePicker fx:id="datePicker" promptText="Fecha del préstamo" />
-         </children>
-      </FlowPane>
-   </top>
 </BorderPane>

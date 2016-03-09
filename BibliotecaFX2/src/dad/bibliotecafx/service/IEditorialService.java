@@ -1,12 +1,13 @@
 package dad.bibliotecafx.service;
 
+
 import java.util.List;
 
-import dad.bibliotecafx.service.items.EditorialItem;
+import dad.bibliotecafx.modelo.Editorial;
 
 public interface IEditorialService {
-	public List<EditorialItem> listarEditoriales() throws ServiceException;
-	public void crearEditorial(EditorialItem editorial) throws ServiceException;
-	public void actualizarEditorial(EditorialItem editorial) throws ServiceException;
-	public void eliminarEditorial(EditorialItem editorial) throws ServiceException;
+	public List<Editorial> getEditoriales() throws ServiceException;
+	public void crearEditorial(Editorial editorial) throws ServiceException;
+	public void actualizarEditorial(Editorial editorial) throws ServiceException;
+	public void eliminarEditorial(Editorial editorial) throws ServiceException;
 }

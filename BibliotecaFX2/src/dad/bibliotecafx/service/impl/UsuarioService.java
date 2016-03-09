@@ -6,29 +6,44 @@ import java.util.List;
 import org.hibernate.Query;
 
 import dad.bibliotecafx.db.DataBase;
+import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.IUsuarioService;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.entidades.UsuarioEntity;
-import dad.bibliotecafx.service.items.UsuarioItem;
 
 public class UsuarioService implements IUsuarioService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<UsuarioItem> listarTodosUsuarios() throws ServiceException {
+	public List<Usuario> getUsuarios() throws ServiceException {
 		DataBase.begin();
 		Query consultaUsuarios = DataBase.getSession().createQuery("FROM UsuarioEntity");
-		List<UsuarioEntity> usuariosList = consultaUsuarios.list();
-		List<UsuarioItem> usuarios = new ArrayList<UsuarioItem>();
-		for (UsuarioEntity u : usuariosList) {
-			usuarios.add(u.toItem());
+		List<UsuarioEntity> usuariosListEntity = consultaUsuarios.list();
+		List<Usuario> usuariosList = new ArrayList<Usuario>();
+		for (UsuarioEntity u : usuariosListEntity) {
+			usuariosList.add(u.toItem().toModel());
 		}
 		DataBase.commit();
-		return usuarios;
+		return usuariosList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Usuario> getUsuariosLectores() throws ServiceException {
+		DataBase.begin();
+		Query consultaUsuariosLectores = DataBase.getSession()
+				.createQuery("FROM UsuarioEntity u WHERE u.rol.tipo = :tipo").setString("tipo", "Lector");
+		List<UsuarioEntity> usuariosLectoresListEntity = consultaUsuariosLectores.list();
+		List<Usuario> usuariosLectoresList = new ArrayList<Usuario>();
+		for (UsuarioEntity u : usuariosLectoresListEntity) {
+			usuariosLectoresList.add(u.toItem().toModel());
+		}
+		DataBase.commit();
+		return usuariosLectoresList;
 	}
 
 	@Override
-	public boolean crearUsuario(UsuarioItem usuario) throws ServiceException {
+	public boolean crearUsuario(Usuario usuario) throws ServiceException {
 		boolean yaExiste = false;
 		DataBase.begin();
 		Long registros;
@@ -38,7 +53,7 @@ public class UsuarioService implements IUsuarioService {
 		DataBase.commit();
 		if (registros == 0) {
 			DataBase.begin();
-			DataBase.getSession().save(usuario.toEntity());
+			DataBase.getSession().save(usuario.toItem().toEntity());
 			DataBase.commit();
 		} else {
 			yaExiste = true;
@@ -47,44 +62,35 @@ public class UsuarioService implements IUsuarioService {
 	}
 
 	@Override
-	public void actualizarUsuario(UsuarioItem usuario) throws ServiceException {
+	public void actualizarUsuario(Usuario usuario) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().update(DataBase.getSession().merge(usuario.toEntity()));
+		DataBase.getSession().update(DataBase.getSession().merge(usuario.toItem().toEntity()));
 		DataBase.commit();
 	}
 
 	@Override
-	public void eliminarUsuario(UsuarioItem usuario) throws ServiceException {
+	public void eliminarUsuario(Usuario usuario) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().delete(usuario.toEntity());
+		DataBase.getSession().delete(usuario.toItem().toEntity());
 		DataBase.commit();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<UsuarioItem> listarUsuariosLectores() throws ServiceException {
-		DataBase.begin();
-
-		Query consultaUsuarios = DataBase.getSession().createQuery("FROM UsuarioEntity u  WHERE u.rol.tipo = :tipo")
-				.setString("tipo", "Lector");
-		List<UsuarioEntity> usuariosList = consultaUsuarios.list();
-
-		List<UsuarioItem> usuarios = new ArrayList<UsuarioItem>();
-		for (UsuarioEntity u : usuariosList) {
-			usuarios.add(u.toItem());
-		}
-		DataBase.commit();
-		return usuarios;
-	}
-
-	@Override
-	public UsuarioItem loginCorrecto(String usuario, String password) throws ServiceException {
+	public Usuario loginCorrecto(String usuario, String password) throws ServiceException {
 		DataBase.begin();
 		UsuarioEntity usu;
 		usu = (UsuarioEntity) (DataBase.getSession()
 				.createQuery("FROM UsuarioEntity WHERE usuario = :usuario AND password = :password")
 				.setString("usuario", usuario).setString("password", password).uniqueResult());
 		DataBase.commit();
-		return usu.toItem();
+		return usu.toItem().toModel();
 	}
+
+//	private Long getUltimoId() {
+//		Long lastId;
+//		lastId = ((BigInteger) DataBase.getSession().createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult())
+//				.longValue();
+//		return lastId;
+//	}
+
 }

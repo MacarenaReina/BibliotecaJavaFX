@@ -15,7 +15,8 @@ public class LibroItem {
 	private String ISBN;
 	private String titulo;
 	private EditorialItem editorial;
-	private Integer anioPublicacion;	
+	private Integer anioPublicacion;
+	private Integer cantidad;
 	private Set<AutorItem> autores = new HashSet<AutorItem>();
 			
 	public String getISBN() {
@@ -50,6 +51,14 @@ public class LibroItem {
 		this.anioPublicacion = anioPublicacion;
 	}
 
+	public Integer getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(Integer cantidad) {
+		this.cantidad = cantidad;
+	}
+
 	public Set<AutorItem> getAutores() {
 		return autores;
 	}
@@ -64,6 +73,7 @@ public class LibroItem {
 		le.setAnioPublicacion(getAnioPublicacion());
 		le.setISBN(getISBN());
 		le.setTitulo(getTitulo());	
+		le.setCantidad(getCantidad());
 		Set<AutorEntity> autores = new HashSet<AutorEntity>();
 		for (AutorItem autor : getAutores()) {
 			autores.add(autor.toEntity());
@@ -77,7 +87,8 @@ public class LibroItem {
 		le.setEditorial(getEditorial().toModel());
 		le.setAnioPublicacion(getAnioPublicacion());
 		le.setISBN(getISBN());
-		le.setTitulo(getTitulo());		
+		le.setTitulo(getTitulo());
+		le.setCantidad(getCantidad());
 		ObservableSet<Autor> autores = FXCollections.observableSet(new HashSet<Autor>());
 		for (AutorItem autor : getAutores()) {
 			autores.add(autor.toModel());

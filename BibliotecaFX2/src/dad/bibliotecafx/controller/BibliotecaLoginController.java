@@ -3,6 +3,7 @@ package dad.bibliotecafx.controller;
 import java.io.IOException;
 
 import dad.bibliotecafx.Main;
+import dad.bibliotecafx.db.DataBase;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
@@ -43,7 +44,9 @@ public class BibliotecaLoginController {
 	private void onLoginHandle(ActionEvent e) {
 		try {
 			Usuario usuario = (ServiceLocator.getUsuarioService().loginCorrecto(usuarioText.getText(),
-					passwordText.getText())).toModel();
+					passwordText.getText()));
+			System.out.println(usuario.getUsuario());
+			System.out.println(usuario.getPassword());
 			try {
 				this.main.showBibliotecaScene(usuario);
 			} catch (IOException | RuntimeException e1) {
@@ -58,6 +61,8 @@ public class BibliotecaLoginController {
 			alert.setTitle("Error");
 			alert.setContentText("Los datos de acceso no son correctos");
 			alert.showAndWait();
+		} finally{
+			DataBase.getSession().clear();
 		}
 	}
 

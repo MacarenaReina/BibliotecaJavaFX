@@ -10,7 +10,6 @@ import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -45,29 +44,27 @@ public class UsuarioAltaController {
 	@FXML
 	private void initialize() {
 		nombreUsuText.textProperty().addListener(new ChangeListener<String>() {
-		    @Override
-		    public void changed(ObservableValue<? extends String> observable,
-		            String oldValue, String newValue) {
-		    	nombreUsuarioUsuText.setText(newValue.toLowerCase());
-		    }
-		});		
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				nombreUsuarioUsuText.setText(newValue.toLowerCase());
+			}
+		});
 		nombreUsuText.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue.booleanValue()) {
-                	Random rnd = new Random();
-                	nombreUsuarioUsuText.setText(nombreUsuarioUsuText.getText()+rnd.nextInt(100));
-//                	contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
-                } 
-            }
-        });
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (!newValue.booleanValue()) {
+					Random rnd = new Random();
+					nombreUsuarioUsuText.setText(nombreUsuarioUsuText.getText() + rnd.nextInt(100));
+					// contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
+				}
+			}
+		});
 		nombreUsuarioUsuText.textProperty().addListener(new ChangeListener<String>() {
-		    @Override
-		    public void changed(ObservableValue<? extends String> observable,
-		            String oldValue, String newValue) {
-		    	contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
-		    }
-		});		
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
+			}
+		});
 	}
 
 	@FXML
@@ -80,20 +77,16 @@ public class UsuarioAltaController {
 			Rol rol = new Rol();
 			rol.setTipo(result.get());
 			try {
-				ServiceLocator.getRolService().crearRol(rol.toItem());
+				ServiceLocator.getRolService().crearRol(rol);
 			} catch (ServiceException | RuntimeException e) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Error");
 				alert.setContentText("Ha ocurrido un error al crear el rol:\n" + e.getMessage()
 						+ "\nLos datos no se guardarán en la Base de Datos");
 				alert.showAndWait();
-				DataBase.rollback();
+				DataBase.getSession().close();
 				e.printStackTrace();
 			}
-
-//			ObservableList<Rol> roles = main.getRolesData();
-			rolUsuComboBox.setItems(main.getRolesData());			
-			rolUsuComboBox.setValue(main.getRolesData().get(0));
 		}
 	}
 
@@ -117,9 +110,9 @@ public class UsuarioAltaController {
 			usuario.setUsuario(nombreUsuario);
 			usuario.setPassword(contrasenia);
 			usuario.setRol(rol);
-
+			main.getStage().close();
 			try {
-				if (ServiceLocator.getUsuarioService().crearUsuario(usuario.toItem())) {
+				if (ServiceLocator.getUsuarioService().crearUsuario(usuario)) {
 					Alert alert = new Alert(AlertType.WARNING);
 					alert.setTitle("¡Atención!");
 					alert.setContentText("¡El usuario ya existe en la Base de Datos!");
@@ -133,7 +126,7 @@ public class UsuarioAltaController {
 				alert.setContentText("Ha ocurrido un error al crear el usuario:\n" + e.getMessage()
 						+ "\nLos datos no se guardarán en la Base de Datos");
 				alert.showAndWait();
-				DataBase.rollback();
+				DataBase.getSession().close();
 				e.printStackTrace();
 			}
 		}
@@ -144,25 +137,22 @@ public class UsuarioAltaController {
 		main.getStage().close();
 	}
 
-	public void setRolesData(ObservableList<Rol> roles) {
-		rolUsuComboBox.setItems(roles);
+	public void setMain(Main main, Usuario usuario) {
+		this.main = main;
+		this.usuarioLogged = usuario;
+		rolUsuComboBox.setItems(main.getRolesData());
 		Rol r = null;
-		for (Rol rol : roles) {
-			if(rol.getTipo().equals("Lector")){
+		for (Rol rol : main.getRolesData()) {
+			if (rol.getTipo().equals("Lector")) {
 				r = rol;
 			}
 		}
 		rolUsuComboBox.setValue(r);
-	}
-
-	public void setMain(Main main, Usuario usuario) {
-		this.main = main;
-		this.usuarioLogged = usuario;
 		ocultarDatos();
 	}
 
 	private void ocultarDatos() {
-		if(usuarioLogged.getRol().getTipo().equals("Bibliotecario")){
+		if (usuarioLogged.getRol().getTipo().equals("Bibliotecario")) {
 			nuevoRolButton.setVisible(false);
 			rolUsuComboBox.setVisible(false);
 			rolEtiqueta.setVisible(false);

@@ -6,46 +6,54 @@ import java.util.List;
 import org.hibernate.Query;
 
 import dad.bibliotecafx.db.DataBase;
+import dad.bibliotecafx.modelo.Autor;
 import dad.bibliotecafx.service.IAutorService;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.entidades.AutorEntity;
-import dad.bibliotecafx.service.items.AutorItem;
 
 public class AutorService implements IAutorService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AutorItem> listarAutores() throws ServiceException {
-		DataBase.begin();		
+	public List<Autor> getAutores() throws ServiceException {
+		DataBase.begin();
 		Query consultaAutores = DataBase.getSession().createQuery("FROM AutorEntity");
-		List<AutorEntity> autorList = consultaAutores.list();		
-		List<AutorItem> autores = new ArrayList<AutorItem>();
+		List<AutorEntity> autorList = consultaAutores.list();
+		List<Autor> autoresList = new ArrayList<Autor>();
 		for (AutorEntity a : autorList) {
-			autores.add(a.toItem());
+			autoresList.add(a.toItem().toModel());
 		}
 		DataBase.commit();
-		return autores;
+		return autoresList;
 	}
 
 	@Override
-	public void crearAutor(AutorItem autor) throws ServiceException {
-		DataBase.begin();	
-		DataBase.getSession().save(autor.toEntity());	
-		DataBase.commit();
-	}
-
-	@Override
-	public void actualizarAutor(AutorItem autor) throws ServiceException {
+	public void crearAutor(Autor autor) throws ServiceException {
 		DataBase.begin();
-		DataBase.getSession().update(DataBase.getSession().merge(autor.toEntity()));
+		DataBase.getSession().save(autor.toItem().toEntity());
 		DataBase.commit();
 	}
 
 	@Override
-	public void eliminarAutor(AutorItem autor) throws ServiceException {
-		DataBase.begin();		
-		DataBase.getSession().delete(autor.toEntity());		
+	public void actualizarAutor(Autor autor) throws ServiceException {
+		DataBase.begin();
+		DataBase.getSession().update(DataBase.getSession().merge(autor.toItem().toEntity()));
 		DataBase.commit();
 	}
+
+	@Override
+	public void eliminarAutor(Autor autor) throws ServiceException {
+		DataBase.begin();
+		DataBase.getSession().delete(autor.toItem().toEntity());
+		DataBase.commit();
+
+	}
+
+//	private Long getUltimoId() {
+//		Long lastId;
+//		lastId = ((BigInteger) DataBase.getSession().createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult())
+//				.longValue();
+//		return lastId;
+//	}
 
 }

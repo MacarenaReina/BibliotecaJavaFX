@@ -2,11 +2,11 @@ package dad.bibliotecafx.service;
 
 import java.util.List;
 
-import dad.bibliotecafx.service.items.AutorItem;
+import dad.bibliotecafx.modelo.Autor;
 
 public interface IAutorService {
-	public List<AutorItem> listarAutores() throws ServiceException;
-	public void crearAutor(AutorItem autor) throws ServiceException;
-	public void actualizarAutor(AutorItem autor) throws ServiceException;
-	public void eliminarAutor(AutorItem autor) throws ServiceException;
+	public List<Autor> getAutores() throws ServiceException;
+	public void crearAutor(Autor autor) throws ServiceException;
+	public void actualizarAutor(Autor autor) throws ServiceException;
+	public void eliminarAutor(Autor autor) throws ServiceException;
 }

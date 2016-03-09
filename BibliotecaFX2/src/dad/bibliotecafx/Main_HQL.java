@@ -32,7 +32,7 @@ public class Main_HQL {
 	public static void main(String[] args) {
 		DataBase.connect();
 //		ObservableList<Rol> rolesData = FXCollections.observableArrayList(new ArrayList<Rol>());
-		try {
+//		try {
 //			List<RolItem> rolesList = ServiceLocator.getRolService().listarRoles();
 //			for (RolItem rolItem : rolesList) {
 //				System.out.println(rolItem.getTipo());
@@ -205,6 +205,7 @@ public class Main_HQL {
 			libro1.setEditorial(editorial);
 			libro1.setAnioPublicacion(2016);
 			libro1.setISBN("111111111111");
+			libro1.setCantidad(20);
 			libro1.setTitulo("Don Quijote de la Mancha");
 
 //			ServiceLocator.getLibroService().crearLibro(libro1.toItem());			
@@ -214,6 +215,7 @@ public class Main_HQL {
 			libro2.setEditorial(editorial);
 			libro2.setAnioPublicacion(1990);
 			libro2.setISBN("2222222222222");
+			libro2.setCantidad(10);
 			libro2.setTitulo("Crónicas de una muerte anunciada");
 
 //			ServiceLocator.getLibroService().crearLibro(libro2.toItem());			
@@ -389,21 +391,21 @@ public class Main_HQL {
 //				System.out.println("Usuario: " + usuario.getNombre());
 //				System.out.println("Rol: " + usuario.getRol().getTipo());
 //			}	
-			
-			List<UsuarioItem> usuarioItem = ServiceLocator.getUsuarioService().listarUsuariosLectores();
-			ObservableList<Usuario> usuarios = FXCollections.observableArrayList(new ArrayList<Usuario>());
-			for (UsuarioItem usuario : usuarioItem) {
-				usuarios.add(usuario.toModel());
-			}
-			for (Usuario usuario : usuarios) {
-				System.out.println("Usuario: " + usuario.getNombre());
-				System.out.println("Rol: " + usuario.getRol().getTipo());
-			}
-			
-			
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+//			
+//			List<UsuarioItem> usuarioItem = ServiceLocator.getUsuarioService().listarUsuariosLectores();
+//			ObservableList<Usuario> usuarios = FXCollections.observableArrayList(new ArrayList<Usuario>());
+//			for (UsuarioItem usuario : usuarioItem) {
+//				usuarios.add(usuario.toModel());
+//			}
+//			for (Usuario usuario : usuarios) {
+//				System.out.println("Usuario: " + usuario.getNombre());
+//				System.out.println("Rol: " + usuario.getRol().getTipo());
+//			}
+//			
+//			
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
 
 		DataBase.getSession().close();
 	}

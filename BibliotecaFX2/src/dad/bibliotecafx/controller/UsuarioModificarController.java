@@ -6,7 +6,6 @@ import dad.bibliotecafx.modelo.Rol;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -54,15 +53,15 @@ public class UsuarioModificarController {
 		usuario.setRol(rolModifUsuComboBox.getSelectionModel().getSelectedItem());
 
 		try {
-			ServiceLocator.getUsuarioService().actualizarUsuario(usuario.toItem());
+			ServiceLocator.getUsuarioService().actualizarUsuario(usuario);
 			main.getStage().close();
 		} catch (ServiceException | RuntimeException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar el usuario:\n" + e.getMessage()
-					+ "\nLos datos no se guardarán en la Base de Datos");
+			alert.setContentText("Ha ocurrido un error al actualizar el usuario:\n" + e.getMessage() + "\n"
+					+ e.getCause() + "\nLos datos no se guardarán en la Base de Datos");
 			alert.showAndWait();
-			DataBase.rollback();
+			DataBase.getSession().close();
 			e.printStackTrace();
 		}
 	}
@@ -75,11 +74,8 @@ public class UsuarioModificarController {
 	public void setMain(Main main, Usuario usuarioLogged) {
 		this.main = main;
 		this.usuarioLogged = usuarioLogged;
+		rolModifUsuComboBox.setItems(main.getRolesData());
 		ocultarDatos();
-	}
-
-	public void setRolesData(ObservableList<Rol> roles) {
-		rolModifUsuComboBox.setItems(roles);
 	}
 
 	public void setUsuario(Usuario usuario) {

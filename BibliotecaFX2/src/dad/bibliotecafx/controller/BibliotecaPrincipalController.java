@@ -1,7 +1,6 @@
 package dad.bibliotecafx.controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Optional;
 
 import dad.bibliotecafx.Main;
@@ -15,7 +14,10 @@ import dad.bibliotecafx.modelo.Sancion;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
+import dad.bibliotecafx.utils.DateUtils;
 import dad.bibliotecafx.utils.ReportsUtils;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -29,17 +31,19 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 import net.sf.jasperreports.engine.JRException;
 
 public class BibliotecaPrincipalController {
 
 	private Main main;
 	private Usuario usuarioLogged;
-	
+
 	@FXML
 	private Button devolucionButton;
 
@@ -48,8 +52,8 @@ public class BibliotecaPrincipalController {
 	SortedList<Libro> sortedDataLibros;
 
 	@FXML
-	private TextField libroText; // El nombre tiene que coindicir con el id que
-									// tiene en el XML
+	private TextField libroText;
+
 	@FXML
 	private TableView<Libro> librosTable;
 	@FXML
@@ -61,9 +65,9 @@ public class BibliotecaPrincipalController {
 	@FXML
 	private TableColumn<Libro, Editorial> editorialTableColumn;
 	@FXML
-	private TableColumn<Libro, Number> anioTableColumn;
+	private TableColumn<Libro, Integer> anioTableColumn;
 	@FXML
-	private TableColumn<Libro, String> ejemplaresBiblioTableColumn;
+	private TableColumn<Libro, Integer> ejemplaresBiblioTableColumn;
 
 	// PESTAÑA USUARIOS:
 	private FilteredList<Usuario> filtroUsuarios;
@@ -100,9 +104,9 @@ public class BibliotecaPrincipalController {
 	@FXML
 	private TableColumn<Prestamo, Usuario> usuarioPresTableColumn;
 	@FXML
-	private TableColumn<Prestamo, Date> fechainiPresTableColumn;
+	private TableColumn<Prestamo, String> fechainiPresTableColumn;
 	@FXML
-	private TableColumn<Prestamo, Date> fechadevolPresTableColumn;
+	private TableColumn<Prestamo, String> fechadevolPresTableColumn;
 
 	// PESTAÑA SANCIONES:
 	private FilteredList<Sancion> filtroSanciones;
@@ -117,18 +121,17 @@ public class BibliotecaPrincipalController {
 	@FXML
 	private TableColumn<Sancion, Prestamo> codPrestamoColumn;
 	@FXML
-	private TableColumn<Prestamo, Usuario> usuarioSancionTableColumn;
+	private TableColumn<Sancion, Usuario> usuarioSancionTableColumn;
 	@FXML
-	private TableColumn<Sancion, Date> fechainiSancionTableColumn;
+	private TableColumn<Sancion, String> fechainiSancionTableColumn;
 	@FXML
-	private TableColumn<Sancion, Date> fechafinSancionTableColumn;
+	private TableColumn<Sancion, String> fechafinSancionTableColumn;
 
-	ObservableList<TableColumn<String, ?>> buscarPresComboBoxOL;
 	ObservableList<Rol> rolesComboBox;
-	
+
 	@FXML
 	private MenuItem gestionRolesMenuItem, gestConfigMenuItem, editarMisDatosMenuItem, cambiarUsuarioMenuItem;
-	
+
 	@FXML
 	private Tab usuariosTabPane, prestamosTabPane, sancionesTabPane;
 
@@ -143,7 +146,8 @@ public class BibliotecaPrincipalController {
 		tituloTableColumn.setCellValueFactory(cellData -> cellData.getValue().tituloProperty());
 		autorTableColumn.setCellValueFactory(new PropertyValueFactory<Libro, Autor>("autores"));
 		editorialTableColumn.setCellValueFactory(cellData -> cellData.getValue().editorialProperty());
-		anioTableColumn.setCellValueFactory(cellData -> cellData.getValue().anioPublicacionProperty());
+		anioTableColumn.setCellValueFactory(cellData -> cellData.getValue().anioPublicacionProperty().asObject());
+		ejemplaresBiblioTableColumn.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
 
 		// Usuarios:
 		usuariosTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -156,16 +160,45 @@ public class BibliotecaPrincipalController {
 		codigoPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().codigoProperty().asObject());
 		libroPresTableColumn.setCellValueFactory(new PropertyValueFactory<Prestamo, Libro>("libro"));
 		usuarioPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().usuarioProperty());
-		fechainiPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaPrestamoProperty());
-		fechadevolPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaDevolucionProperty());
+		fechainiPresTableColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Prestamo, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<Prestamo, String> param) {
+						return new SimpleStringProperty(DateUtils.toStringDate(param.getValue().getFechaPrestamo()));
+					}
+				});
+		fechadevolPresTableColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Prestamo, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<Prestamo, String> param) {
+						if (param.getValue().getFechaDevolucion() != null)
+							return new SimpleStringProperty(
+									DateUtils.toStringDate(param.getValue().getFechaDevolucion()));
+						else
+							return null;
+					}
+				});
 
 		// Sanciones:
 		sancionesTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		codPrestamoColumn.setCellValueFactory(cellData -> cellData.getValue().prestamoProperty());
-		usuarioSancionTableColumn.setCellValueFactory(new PropertyValueFactory<Prestamo, Usuario>("prestamo.usuario"));
-//		usuarioSancionTableColumn.setCellValueFactory(new PropertyValueFactory<Sancion, Prestamo>("prestamo"));
-		fechainiSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaAltaProperty());
-		fechafinSancionTableColumn.setCellValueFactory(cellData -> cellData.getValue().fechaFinalizacionProperty());
+		usuarioSancionTableColumn
+				.setCellValueFactory(cellData -> cellData.getValue().prestamoProperty().get().usuarioProperty());
+		fechainiSancionTableColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Sancion, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<Sancion, String> param) {
+						return new SimpleStringProperty(DateUtils.toStringDate(param.getValue().getFechaAlta()));
+					}
+				});
+		fechafinSancionTableColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Sancion, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<Sancion, String> param) {
+						return new SimpleStringProperty(
+								DateUtils.toStringDate(param.getValue().getFechaFinalizacion()));
+					}
+				});
 	}
 
 	// A partir de aquí es de la biblioteca:
@@ -174,7 +207,7 @@ public class BibliotecaPrincipalController {
 
 	@FXML
 	private void onGenerarCarnetUsu(ActionEvent e) {
-		//TODO: Hacer en segundo plano:. Poner código de barras y foto...
+		// TODO: Hacer en segundo plano:. Poner código de barras y foto...
 		int usuariosSeleccionados = usuariosTable.getSelectionModel().getSelectedItems().size();
 		if (usuariosSeleccionados == 0) {
 			Alert alert = new Alert(AlertType.WARNING);
@@ -189,7 +222,8 @@ public class BibliotecaPrincipalController {
 				} catch (IOException | JRException e1) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setTitle("Error");
-					alert.setContentText("Ha ocurrido un error al imprimir el carnet");
+					alert.setContentText(
+							"Ha ocurrido un error al imprimir el carnet:\n" + e1.getMessage() + "\n" + e1.getCause());
 					alert.showAndWait();
 					e1.printStackTrace();
 				}
@@ -201,17 +235,17 @@ public class BibliotecaPrincipalController {
 	@FXML
 	private void onAltaUsuario(ActionEvent e) {
 		try {
-			//TODO:	Ver cómo hacer para que la tabla se actualice "sola"		
 			this.main.showNuevoUsuarioScene(usuarioLogged);
-			if(usuarioLogged.getRol().getTipo().equals("Admministrador")){
+			if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
 				usuariosTable.setItems(main.getUsuariosData());
-			} else{
-				usuariosTable.setItems(main.getUsuariosLectorData());
-			}			
+			} else {
+				usuariosTable.setItems(main.getUsuariosLectoresData());
+			}
 		} catch (IOException e1) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario:\n" + e1.getMessage()
+					+ "\n" + e1.getCause());
 			alert.showAndWait();
 			e1.printStackTrace();
 		}
@@ -220,7 +254,6 @@ public class BibliotecaPrincipalController {
 	@FXML
 	private void onModificarUsuario(ActionEvent e) {
 		int usuariosSeleccionados = usuariosTable.getSelectionModel().getSelectedItems().size();
-
 		if (usuariosSeleccionados == 0) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Modificar usuario");
@@ -234,16 +267,16 @@ public class BibliotecaPrincipalController {
 		} else {
 			try {
 				this.main.showModificarUsuarioScene(usuariosTable.getSelectionModel().getSelectedItem(), usuarioLogged);
-				//TODO:	Ver cómo hacer para que la tabla se actualice "sola"
-				if(usuarioLogged.getRol().getTipo().equals("Admministrador")){
+				if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
 					usuariosTable.setItems(main.getUsuariosData());
-				} else{
-					usuariosTable.setItems(main.getUsuariosLectorData());
-				}	
+				} else {
+					usuariosTable.setItems(main.getUsuariosLectoresData());
+				}
 			} catch (IOException e1) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Error");
-				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar usuario.");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar usuario:\n"
+						+ e1.getMessage() + "\n" + e1.getCause());
 				alert.showAndWait();
 				e1.printStackTrace();
 			}
@@ -266,23 +299,22 @@ public class BibliotecaPrincipalController {
 			if (result.isPresent() && result.get() == ButtonType.OK) {
 				for (Usuario usu : usuariosTable.getSelectionModel().getSelectedItems()) {
 					try {
-						ServiceLocator.getUsuarioService().eliminarUsuario(usu.toItem());
+						ServiceLocator.getUsuarioService().eliminarUsuario(usu);
+						if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
+							usuariosTable.setItems(main.getUsuariosData());
+						} else {
+							usuariosTable.setItems(main.getUsuariosLectoresData());
+						}
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
 						alertError.setContentText("Ha ocurrido un error al eliminar el usuario:\n" + e1.getMessage()
-								+ "\nLos datos no se guardarán en la Base de Datos");
+								+ "\n" + e1.getCause() + "\nLos datos no se guardarán en la Base de Datos");
 						alertError.showAndWait();
-						DataBase.rollback();
+						DataBase.getSession().close();
 						e1.printStackTrace();
 					}
 				}
-				//TODO:	Ver cómo hacer para que la tabla se actualice "sola"				
-				if(usuarioLogged.getRol().getTipo().equals("Admministrador")){
-					usuariosTable.setItems(main.getUsuariosData());
-				} else{
-					usuariosTable.setItems(main.getUsuariosLectorData());
-				}	
 			}
 		}
 	}
@@ -294,10 +326,12 @@ public class BibliotecaPrincipalController {
 		try {
 			this.main.showNuevoPrestamoScene();
 			prestamosTable.setItems(main.getPrestamosData());
+			librosTable.setItems(main.getLibrosData());
 		} catch (IOException e1) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de crear préstamos.");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de crear préstamos:\n" + e1.getMessage()
+					+ "\n" + e1.getCause());
 			alert.showAndWait();
 			e1.printStackTrace();
 		}
@@ -317,20 +351,28 @@ public class BibliotecaPrincipalController {
 			alert.setContentText("¿Seguro que quiere eliminar " + prestamosSeleccionados + " préstamos seleccionados?");
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.isPresent() && result.get() == ButtonType.OK) {
+				// TODO: calcular correctamente el stock
 				for (Prestamo prest : prestamosTable.getSelectionModel().getSelectedItems()) {
 					try {
-						ServiceLocator.getPrestamoService().eliminarPrestamo(prest.toItem());
-						prestamosTable.setItems(main.getPrestamosData());
+						int cant;
+						for (Libro libro : prest.getLibro()) {
+							cant = libro.getCantidad() + 1;
+							libro.setCantidad(cant);
+							ServiceLocator.getLibroService().actualizarLibro(libro);
+						}
+						ServiceLocator.getPrestamoService().eliminarPrestamo(prest);
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
 						alertError.setContentText("Ha ocurrido un error al eliminar el préstamo:\n" + e1.getMessage()
-								+ "\nLos datos no se guardarán en la Base de Datos");
+								+ "\n" + e1.getCause() + "\nLos datos no se guardarán en la Base de Datos");
 						alertError.showAndWait();
-						DataBase.rollback();
+						DataBase.getSession().close();
 						e1.printStackTrace();
 					}
 				}
+				prestamosTable.setItems(main.getPrestamosData());
+				librosTable.setItems(main.getLibrosData());
 			}
 		}
 	}
@@ -352,10 +394,12 @@ public class BibliotecaPrincipalController {
 			try {
 				this.main.showModificarPrestamoScene(prestamosTable.getSelectionModel().getSelectedItem());
 				prestamosTable.setItems(main.getPrestamosData());
+				librosTable.setItems(main.getLibrosData());
 			} catch (IOException e1) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Error");
-				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar préstamo.");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar préstamo:\n"
+						+ e1.getMessage() + "\n" + e1.getCause());
 				alert.showAndWait();
 				e1.printStackTrace();
 			}
@@ -379,11 +423,12 @@ public class BibliotecaPrincipalController {
 			try {
 				this.main.showDevolucionPrestamoDialog(prestamosTable.getSelectionModel().getSelectedItem());
 				prestamosTable.setItems(main.getPrestamosData());
-				sancionesTable.setItems(main.getSancionesData());
+				librosTable.setItems(main.getLibrosData());
 			} catch (IOException e1) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Error");
-				alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario:\n" + e1.getMessage()
+						+ "\n" + e1.getCause());
 				alert.showAndWait();
 				e1.printStackTrace();
 			}
@@ -396,11 +441,12 @@ public class BibliotecaPrincipalController {
 	private void onNuevaSancion() {
 		try {
 			this.main.showNuevaSancionScene();
-			sancionesTable.setItems(main.getSancionesData());
+			sancionesTable.setItems(main.getSancionData());
 		} catch (IOException e1) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de crear sanciones.");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de crear sanciones:\n" + e1.getMessage()
+					+ "\n" + e1.getCause());
 			alert.showAndWait();
 			e1.printStackTrace();
 		}
@@ -422,18 +468,18 @@ public class BibliotecaPrincipalController {
 			if (result.isPresent() && result.get() == ButtonType.OK) {
 				for (Sancion sancion : sancionesTable.getSelectionModel().getSelectedItems()) {
 					try {
-						ServiceLocator.getSancionService().eliminarSancion(sancion.toItem());
+						ServiceLocator.getSancionService().eliminarSancion(sancion);
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
 						alertError.setContentText("Ha ocurrido un error al eliminar la sanción:\n" + e1.getMessage()
 								+ "\nLos datos no se guardarán en la Base de Datos");
 						alertError.showAndWait();
-						DataBase.rollback();
+						DataBase.getSession().close();
 						e1.printStackTrace();
 					}
 				}
-				sancionesTable.setItems(main.getSancionesData());
+				sancionesTable.setItems(main.getSancionData());
 			}
 		}
 	}
@@ -454,12 +500,12 @@ public class BibliotecaPrincipalController {
 		} else {
 			try {
 				this.main.showModificarSancionScene(sancionesTable.getSelectionModel().getSelectedItem());
-				prestamosTable.setItems(main.getPrestamosData());
-				sancionesTable.setItems(main.getSancionesData());
+				sancionesTable.setItems(main.getSancionData());
 			} catch (IOException e1) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Error");
-				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar sanción");
+				alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar sanción:\n"
+						+ e1.getMessage() + "\n" + e1.getCause());
 				alert.showAndWait();
 				e1.printStackTrace();
 			}
@@ -472,10 +518,16 @@ public class BibliotecaPrincipalController {
 	public void gestionRoles() {
 		try {
 			this.main.showGestionRolesScene();
+			if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
+				usuariosTable.setItems(main.getUsuariosData());
+			} else {
+				usuariosTable.setItems(main.getUsuariosLectoresData());
+			}
 		} catch (IOException e1) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de Gestión de roles.");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de Gestión de roles:\n" + e1.getMessage()
+					+ "\n" + e1.getCause());
 			alert.showAndWait();
 			e1.printStackTrace();
 		}
@@ -490,29 +542,11 @@ public class BibliotecaPrincipalController {
 		} catch (IOException e1) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de alta de usuario:\n" + e1.getMessage()
+					+ "\n" + e1.getCause());
 			alert.showAndWait();
 			e1.printStackTrace();
 		}
-	}
-
-	// CARGAR MAIN:
-
-	public void setMain(Main main, Usuario usuario) {
-		this.main = main;
-		
-		this.usuarioLogged = usuario;
-		System.out.println(usuarioLogged.getRol().getTipo());
-//		if(usuarioLogged.getRol().getTipo().equals("Admministrador")){
-//			usuariosTable.setItems(main.getUsuariosData());
-//		} else{
-			usuariosTable.setItems(main.getUsuariosLectorData());
-//		}			
-		librosTable.setItems(main.getLibrosData());		
-		prestamosTable.setItems(main.getPrestamosData());
-		sancionesTable.setItems(main.getSancionesData());
-		
-		ocultarDatos();
 	}
 
 	// FILTROS
@@ -525,7 +559,7 @@ public class BibliotecaPrincipalController {
 					return true;
 				}
 				String lowerCaseFilter = newValue.toLowerCase();
-				
+
 				if (libro.getTitulo().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
 				} else if (libro.getISBN().toLowerCase().contains(lowerCaseFilter)) {
@@ -615,7 +649,7 @@ public class BibliotecaPrincipalController {
 					return true;
 				}
 				String lowerCaseFilter = newValue.toLowerCase();
-				String nombreUsuario = sancion.getPrestamo().toString().toLowerCase();
+				String nombreUsuario = sancion.getPrestamo().getUsuario().getNombre().toLowerCase();
 
 				if (nombreUsuario.contains(lowerCaseFilter)) {
 					return true;
@@ -647,7 +681,27 @@ public class BibliotecaPrincipalController {
 		DataBase.disconnect();
 		main.getPrimaryStage().close();
 	}
-	
+
+	// CARGAR MAIN:
+
+	public void setMain(Main main, Usuario usuario) {
+		this.main = main;
+
+		this.usuarioLogged = usuario;
+
+		System.out.println(usuarioLogged.getRol().getTipo());
+		if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
+			usuariosTable.setItems(main.getUsuariosData());
+		} else {
+			usuariosTable.setItems(main.getUsuariosLectoresData());
+		}
+		librosTable.setItems(main.getLibrosData());
+		prestamosTable.setItems(main.getPrestamosData());
+		sancionesTable.setItems(main.getSancionData());
+
+		ocultarDatos();
+	}
+
 	private void ocultarDatos() {
 		if (usuarioLogged.getRol().getTipo().equals("Lector")) {
 			gestionRolesMenuItem.setVisible(false);
@@ -656,39 +710,35 @@ public class BibliotecaPrincipalController {
 			prestamosTabPane.setDisable(true);
 			sancionesTabPane.setDisable(true);
 		}
-		if(usuarioLogged.getRol().getTipo().equals("Bibliotecario")){
+		if (usuarioLogged.getRol().getTipo().equals("Bibliotecario")) {
 			gestionRolesMenuItem.setVisible(false);
 			gestConfigMenuItem.setVisible(false);
 		}
 	}
-	
+
 	@FXML
 	public void onEditarMisDatosMenuItem() {
 		try {
 			this.main.showModificarUsuarioScene(usuarioLogged, usuarioLogged);
-			if(usuarioLogged.getRol().getTipo().equals("Admministrador")){
-				usuariosTable.setItems(main.getUsuariosData());
-			} else{
-				usuariosTable.setItems(main.getUsuariosLectorData());
-			}	
 		} catch (IOException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar usuario");
+			alert.setContentText("Ha ocurrido un error al cargar la ventana de modificar usuario:\n" + e.getMessage()
+					+ "\n" + e.getCause());
 			alert.showAndWait();
 			e.printStackTrace();
 		}
 	}
-	
+
 	@FXML
 	public void onCambiarUsuario() {
 		try {
 			this.main.showBibliotecaLoginScene();
-//			this.main.getStage().close();
 		} catch (IOException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar la ventana de login");
+			alert.setContentText(
+					"Ha ocurrido un error al cargar la ventana de login:\n" + e.getMessage() + "\n" + e.getCause());
 			alert.showAndWait();
 			e.printStackTrace();
 		}

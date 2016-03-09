@@ -1,11 +1,12 @@
 package dad.bibliotecafx.service;
 
 import java.util.List;
-import dad.bibliotecafx.service.items.RolItem;
+
+import dad.bibliotecafx.modelo.Rol;
 
 public interface IRolService {
-	public List<RolItem> listarRoles() throws ServiceException;
-	public boolean crearRol(RolItem rol) throws ServiceException;
-	public boolean actualizarRol(RolItem rol) throws ServiceException;
-	public void eliminarRol(RolItem rol) throws ServiceException;
+	public List<Rol> getRoles() throws ServiceException;
+	public boolean crearRol(Rol rol) throws ServiceException;
+	public void actualizarRol(Rol rol) throws ServiceException;
+	public void eliminarRol(Rol rol) throws ServiceException;
 }

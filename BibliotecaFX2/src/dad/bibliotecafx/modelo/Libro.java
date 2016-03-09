@@ -22,6 +22,7 @@ public class Libro {
 	private final StringProperty titulo = new SimpleStringProperty(this, "titulo");
 	private final ObjectProperty<Editorial> editorial = new SimpleObjectProperty<Editorial>(this, "editorial");
 	private final IntegerProperty anioPublicacion = new SimpleIntegerProperty(this, "anioPublicacion");
+	private final IntegerProperty cantidad = new SimpleIntegerProperty(this, "cantidad");
 	private final SetProperty<Autor> autores = new SimpleSetProperty<Autor>(FXCollections.observableSet(new HashSet<Autor>()));
 	
 	public final StringProperty ISBNProperty() {
@@ -86,6 +87,25 @@ public class Libro {
 	}
 	
 	@Override
+	public String toString() {
+		return titulo.get();
+	}
+
+	public final IntegerProperty cantidadProperty() {
+		return this.cantidad;
+	}
+	
+
+	public final int getCantidad() {
+		return this.cantidadProperty().get();
+	}
+	
+
+	public final void setCantidad(final int cantidad) {
+		this.cantidadProperty().set(cantidad);
+	}
+	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -116,17 +136,13 @@ public class Libro {
 		l.setISBN(getISBN());
 		l.setTitulo(getTitulo());
 		l.setAnioPublicacion(getAnioPublicacion());
+		l.setCantidad(getCantidad());
 		Set<AutorItem> autores = new HashSet<AutorItem>();
 		for (Autor autor : getAutores()) {
 			autores.add(autor.toItem());
 		}
 		l.setAutores(autores);
 		return l;		
-	}
-	
-	@Override
-	public String toString() {
-		return titulo.get();
 	}
 
 }

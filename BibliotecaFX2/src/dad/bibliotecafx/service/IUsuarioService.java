@@ -2,13 +2,13 @@ package dad.bibliotecafx.service;
 
 import java.util.List;
 
-import dad.bibliotecafx.service.items.UsuarioItem;
+import dad.bibliotecafx.modelo.Usuario;
 
 public interface IUsuarioService {
-	public List<UsuarioItem> listarTodosUsuarios() throws ServiceException;
-	public List<UsuarioItem> listarUsuariosLectores() throws ServiceException;
-	public boolean crearUsuario(UsuarioItem usuario) throws ServiceException;
-	public void actualizarUsuario(UsuarioItem usuario) throws ServiceException;
-	public void eliminarUsuario(UsuarioItem usuario) throws ServiceException;
-	public UsuarioItem loginCorrecto(String usuario, String password) throws ServiceException;
+	public List<Usuario> getUsuarios() throws ServiceException;
+	public List<Usuario> getUsuariosLectores() throws ServiceException;
+	public boolean crearUsuario(Usuario usuario) throws ServiceException;
+	public void actualizarUsuario(Usuario usuario) throws ServiceException;
+	public void eliminarUsuario(Usuario usuario) throws ServiceException;
+	public Usuario loginCorrecto(String usuario, String password) throws ServiceException;
 }

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 
 import dad.bibliotecafx.controller.BibliotecaLoginController;
@@ -15,6 +14,7 @@ import dad.bibliotecafx.controller.BibliotecaPrincipalController;
 import dad.bibliotecafx.controller.DevolucionPrestamoController;
 import dad.bibliotecafx.controller.GestionConfiguracionesController;
 import dad.bibliotecafx.controller.GestionRolesController;
+import dad.bibliotecafx.controller.ModificarRolController;
 import dad.bibliotecafx.controller.PrestamoInsertarController;
 import dad.bibliotecafx.controller.PrestamoModificarController;
 import dad.bibliotecafx.controller.SancionInsertarController;
@@ -29,11 +29,6 @@ import dad.bibliotecafx.modelo.Sancion;
 import dad.bibliotecafx.modelo.Usuario;
 import dad.bibliotecafx.service.ServiceException;
 import dad.bibliotecafx.service.ServiceLocator;
-import dad.bibliotecafx.service.items.LibroItem;
-import dad.bibliotecafx.service.items.PrestamoItem;
-import dad.bibliotecafx.service.items.RolItem;
-import dad.bibliotecafx.service.items.SancionItem;
-import dad.bibliotecafx.service.items.UsuarioItem;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,37 +47,20 @@ public class Main extends Application {
 	private Usuario usuarioLogged;
 
 	private Properties property;
-	private Integer diasPrestamo, diasSancion;
+	private Integer diasPrestamo, diasSancion, maxLibrosPrestammo;
 
-	private ObservableList<Libro> librosData = FXCollections.observableArrayList();
 	private ObservableList<Usuario> usuariosData = FXCollections.observableArrayList();
-	private ObservableList<Usuario> usuariosLectorData = FXCollections.observableArrayList();
+	private ObservableList<Usuario> usuariosLectoresData = FXCollections.observableArrayList();
+	private ObservableList<Libro> librosData = FXCollections.observableArrayList();
 	private ObservableList<Prestamo> prestamosData = FXCollections.observableArrayList();
+	private ObservableList<Sancion> sancionData = FXCollections.observableArrayList();
 	private ObservableList<Rol> rolesData = FXCollections.observableArrayList();
-	private ObservableList<Sancion> sancionesData = FXCollections.observableArrayList();
 
 	@Override
 	public void start(Stage primaryStage) {
 		DataBase.connect();
-		actualizarRoles();
-		actualizarLibros();
-		actualizarPrestamos();
-		actualizarSanciones();
-		actualizarUsuarios();
-		actualizarUsuariosLector();
-		crearRolesPorDefecto();
-		property = new Properties();
-		try {
-			property.load(Main.class.getResourceAsStream("/dad/bibliotecafx/config/config.properties"));
-			diasPrestamo = Integer.parseInt(property.getProperty("biblioteca.diasprestamo"));
-			diasSancion = Integer.parseInt(property.getProperty("biblioteca.diassancion"));
-		} catch (IOException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al cargar el fichero de configuración");
-			alert.showAndWait();
-			e1.printStackTrace();
-		}
+		
+		cargarPropiedades();
 
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("BibliotecaFX - Macarena y Joyce");
@@ -93,7 +71,8 @@ public class Main extends Application {
 			e2.printStackTrace();
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al iniciar la aplicación");
+			alert.setContentText(
+					"Ha ocurrido un error al iniciar la aplicación:\n" + e2.getMessage() + "\n" + e2.getCause());
 			alert.showAndWait();
 			e2.printStackTrace();
 		}
@@ -102,53 +81,7 @@ public class Main extends Application {
 			@Override
 			public void handle(WindowEvent event) {
 				DataBase.disconnect();
-				URI uri = null;
-				try {
-					uri = Main.class.getResource("/dad/bibliotecafx/config/config.properties").toURI();
-				} catch (URISyntaxException e1) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Error");
-					alert.setContentText("Ha ocurrido un error con el fichero de propiedades");
-					alert.showAndWait();
-					e1.printStackTrace();
-				}
-				File f = new File(uri);
-				FileOutputStream file = null;
-
-				try {
-					file = new FileOutputStream(f);
-				} catch (FileNotFoundException e) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Error");
-					alert.setContentText("No se ha encontrado el fichero de configuración");
-					alert.showAndWait();
-					e.printStackTrace();
-				}
-
-				property.setProperty("biblioteca.diasprestamo", String.valueOf(diasPrestamo));
-				property.setProperty("biblioteca.diassancion", String.valueOf(diasSancion));
-				try {
-					property.store(file, null);
-
-				} catch (IOException io) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Error");
-					alert.setContentText("Ha ocurrido un error al guardar los datos en el fichero de propiedades");
-					alert.showAndWait();
-					io.printStackTrace();
-				} finally {
-					if (file != null) {
-						try {
-							file.close();
-						} catch (IOException io) {
-							Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Error");
-							alert.setContentText("Ha ocurrido un error al cerrar el fichero de propiedades");
-							alert.showAndWait();
-							io.printStackTrace();
-						}
-					}
-				}
+				guardarPropiedades();
 			}
 		});
 	}
@@ -180,19 +113,19 @@ public class Main extends Application {
 
 		BibliotecaPrincipalController controller = ((BibliotecaPrincipalController) loader.getController());
 		controller.setMain(this, usuarioLogged);
+		controller.setFilterLibros(getLibrosData());
+		controller.setFilterPrestamos(getPrestamosData());
+		controller.setFilterSanciones(getSancionData());
 		if(usuarioLogged.getRol().getTipo().equals("Administrador")){
 			controller.setFilterUsuarios(getUsuariosData());
 		} else{
-			controller.setFilterUsuarios(getUsuariosLectorData());
-		}		
-		controller.setFilterLibros(getLibrosData());		
-		controller.setFilterPrestamos(getPrestamosData());
-		controller.setFilterSanciones(getSancionesData());
-		
+			controller.setFilterUsuarios(getUsuariosLectoresData());
+		}
+
 		this.primaryStage.setScene(scene);
 		this.primaryStage.setResizable(true);
 		this.primaryStage.setMaximized(true);
-//		this.primaryStage.centerOnScreen();
+		// this.primaryStage.centerOnScreen();
 		this.primaryStage.show();
 	}
 
@@ -212,7 +145,6 @@ public class Main extends Application {
 
 		UsuarioAltaController controller = ((UsuarioAltaController) loader.getController());
 		controller.setMain(this, usuario);
-		controller.setRolesData(getRolesData());
 
 		stage.setScene(scene);
 		stage.showAndWait();
@@ -234,7 +166,6 @@ public class Main extends Application {
 
 		UsuarioModificarController controller = ((UsuarioModificarController) loader.getController());
 		controller.setMain(this, usuarioLogged);
-		controller.setRolesData(getRolesData());
 		controller.setUsuario(usuario);
 
 		stage.setScene(scene);
@@ -256,7 +187,58 @@ public class Main extends Application {
 		Scene scene = new Scene(loader.load());
 
 		PrestamoInsertarController controller = ((PrestamoInsertarController) loader.getController());
+		controller.setMain(this, usuarioLogged);
+		if(usuarioLogged.getRol().getTipo().equals("Administrador")){
+			controller.setFilterUsuarios(getUsuariosData());
+		} else{
+			controller.setFilterUsuarios(getUsuariosLectoresData());
+		}
+		controller.setFilterLibros(getLibrosData());
+
+		stage.setScene(scene);
+		stage.showAndWait();
+
+	}
+
+	public void showDevolucionPrestamoDialog(Prestamo prestamo) throws IOException {
+		stage = new Stage();
+		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
+		stage.setTitle("Devolución de préstamo");
+		stage.setResizable(false);
+
+		URL url = getClass().getResource("views/DevolucionPrestamo.fxml");
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(url);
+
+		Scene scene = new Scene(loader.load());
+
+		DevolucionPrestamoController controller = ((DevolucionPrestamoController) loader.getController());
 		controller.setMain(this);
+		controller.setPrestamo(prestamo);
+		stage.setScene(scene);
+		stage.showAndWait();
+	}
+
+	public void showModificarPrestamoScene(Prestamo prestamo) throws IOException {
+		stage = new Stage();
+		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
+		stage.setTitle("Modificar préstamo");
+
+		URL url = getClass().getResource("views/BibliotecaModificarPrestamo.fxml");
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(url);
+
+		Scene scene = new Scene(loader.load());
+
+		PrestamoModificarController controller = ((PrestamoModificarController) loader.getController());
+		controller.setMain(this, usuarioLogged);
+		controller.setPrestamo(prestamo);
+		if(usuarioLogged.getRol().getTipo().equals("Administrador")){
+			controller.setFilterUsuarios(getUsuariosData());
+		} else{
+			controller.setFilterUsuarios(getUsuariosLectoresData());
+		}
+		controller.setFilterLibros(getLibrosData());
 
 		stage.setScene(scene);
 		stage.showAndWait();
@@ -276,29 +258,30 @@ public class Main extends Application {
 
 		GestionConfiguracionesController controller = ((GestionConfiguracionesController) loader.getController());
 		controller.setMain(this);
-		controller.setData(diasPrestamo, diasSancion);
+		controller.setData(diasPrestamo, diasSancion, maxLibrosPrestammo);
 
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
 
-	public void showDevolucionPrestamoDialog(Prestamo prestamo) throws IOException {
+	public void showModificarRolDialog(Rol rol) throws IOException {
 		stage = new Stage();
 		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
-		stage.setTitle("Configuración");
+		stage.setTitle("Modificar Rol");
 		stage.setResizable(false);
 
-		URL url = getClass().getResource("views/DevolucionPrestamo.fxml");
+		URL url = getClass().getResource("views/BibliotecaModificarRol.fxml");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(url);
 
 		Scene scene = new Scene(loader.load());
 
-		DevolucionPrestamoController controller = ((DevolucionPrestamoController) loader.getController());
+		ModificarRolController controller = ((ModificarRolController) loader.getController());
 		controller.setMain(this);
-		controller.setPrestamo(prestamo);
+		controller.setRol(rol);
 		stage.setScene(scene);
 		stage.showAndWait();
+		// this.primaryStage.refrescarTablaUsuarios();
 	}
 
 	public void showGestionRolesScene() throws IOException {
@@ -335,6 +318,7 @@ public class Main extends Application {
 
 		SancionInsertarController controller = ((SancionInsertarController) loader.getController());
 		controller.setMain(this);
+		controller.setFilterPrestamos(getPrestamosData());
 
 		stage.setScene(scene);
 		stage.showAndWait();
@@ -360,28 +344,36 @@ public class Main extends Application {
 		stage.showAndWait();
 	}
 
-	public void showModificarPrestamoScene(Prestamo prestamo) throws IOException {
-		stage = new Stage();
-		stage.getIcons().add(new Image("dad/bibliotecafx/images/biblioteca.png"));
-		stage.setTitle("Configuración");
-		stage.setResizable(false);
-
-		URL url = getClass().getResource("views/BibliotecaModificarPrestamo.fxml");
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(url);
-
-		Scene scene = new Scene(loader.load());
-
-		PrestamoModificarController controller = ((PrestamoModificarController) loader.getController());
-		controller.setMain(this);
-		controller.setPrestamo(prestamo);
-		stage.setScene(scene);
-		stage.showAndWait();
-	}
-
 	public ObservableList<Usuario> getUsuariosData() {
 		actualizarUsuarios();
 		return usuariosData;
+	}
+
+	private void actualizarUsuarios() {
+		usuariosData.clear();
+		try {
+			for (Usuario usuario : ServiceLocator.getUsuarioService().getUsuarios()) {
+				usuariosData.add(usuario);
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public ObservableList<Usuario> getUsuariosLectoresData() {
+		actualizarUsuariosLectores();
+		return usuariosLectoresData;
+	}
+
+	private void actualizarUsuariosLectores() {
+		usuariosLectoresData.clear();
+		try {
+			for (Usuario usuario : ServiceLocator.getUsuarioService().getUsuariosLectores()) {
+				usuariosLectoresData.add(usuario);
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ObservableList<Libro> getLibrosData() {
@@ -389,9 +381,15 @@ public class Main extends Application {
 		return librosData;
 	}
 
-	public ObservableList<Rol> getRolesData() {
-		actualizarRoles();
-		return rolesData;
+	private void actualizarLibros() {
+		librosData.clear();
+		try {
+			for (Libro libro : ServiceLocator.getLibroService().getLibros()) {
+				librosData.add(libro);
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ObservableList<Prestamo> getPrestamosData() {
@@ -399,113 +397,46 @@ public class Main extends Application {
 		return prestamosData;
 	}
 
-	public ObservableList<Sancion> getSancionesData() {
-		actualizarSanciones();
-		return sancionesData;
-	}
-
-	public ObservableList<Usuario> getUsuariosLectorData() {
-		actualizarUsuariosLector();
-		return usuariosLectorData;
-	}
-
-	private void actualizarUsuariosLector() {
-		// usuariosLectorData = FXCollections.observableArrayList();
-		usuariosLectorData.clear();
-		try {
-			List<UsuarioItem> usuariosList = ServiceLocator.getUsuarioService().listarUsuariosLectores();
-			for (UsuarioItem usuarioItem : usuariosList) {
-				usuariosLectorData.add(usuarioItem.toModel());
-			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar los usuarios");
-			alert.showAndWait();
-			e1.printStackTrace();
-		}
-	}
-
-	private void actualizarUsuarios() {
-		// usuariosData.clear();
-		usuariosData.clear();
-		try {
-			List<UsuarioItem> usuariosList = ServiceLocator.getUsuarioService().listarTodosUsuarios();
-			for (UsuarioItem usuarioItem : usuariosList) {
-				usuariosData.add(usuarioItem.toModel());
-			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar los usuarios");
-			alert.showAndWait();
-			e1.printStackTrace();
-		}
-	}
-
-	private void actualizarLibros() {
-		// librosData.clear();
-		librosData.clear();
-		try {
-			List<LibroItem> librosList = ServiceLocator.getLibroService().listarLibros();
-			for (LibroItem libroItem : librosList) {
-				librosData.add(libroItem.toModel());
-			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar los libros");
-			alert.showAndWait();
-			e1.printStackTrace();
-		}
-	}
-
 	private void actualizarPrestamos() {
 		prestamosData.clear();
 		try {
-			List<PrestamoItem> prestamosList = ServiceLocator.getPrestamoService().listarPrestamos();
-			for (PrestamoItem prestamoItem : prestamosList) {
-				prestamosData.add(prestamoItem.toModel());
+			for (Prestamo prestamo : ServiceLocator.getPrestamoService().getPrestamos()) {
+				prestamosData.add(prestamo);
 			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar los préstamos");
-			alert.showAndWait();
-			e1.printStackTrace();
+		} catch (ServiceException e) {
+			e.printStackTrace();
 		}
 	}
 
-	private void actualizarRoles() {
-		// rolesData.clear();
-		rolesData.clear();
-		try {
-			List<RolItem> rolesList = ServiceLocator.getRolService().listarRoles();
-			for (RolItem rolItem : rolesList) {
-				rolesData.add(rolItem.toModel());
-			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar los préstamos");
-			alert.showAndWait();
-			e1.printStackTrace();
-		}
+	public ObservableList<Sancion> getSancionData() {
+		actualizarSanciones();
+		return sancionData;
 	}
 
 	private void actualizarSanciones() {
-		sancionesData.clear();
+		sancionData.clear();
 		try {
-			List<SancionItem> sancionesList = ServiceLocator.getSancionService().listarSanciones();
-			for (SancionItem sancionItem : sancionesList) {
-				sancionesData.add(sancionItem.toModel());
+			for (Sancion sancion : ServiceLocator.getSancionService().getSanciones()) {
+				sancionData.add(sancion);
 			}
-		} catch (ServiceException e1) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText("Ha ocurrido un error al actualizar las sanciones");
-			alert.showAndWait();
-			e1.printStackTrace();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public ObservableList<Rol> getRolesData() {
+		actualizarRoles();
+		return rolesData;
+	}
+
+	private void actualizarRoles() {
+		rolesData.clear();
+		try {
+			for (Rol rol : ServiceLocator.getRolService().getRoles()) {
+				rolesData.add(rol);
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -515,6 +446,10 @@ public class Main extends Application {
 
 	public Integer getDiasSancion() {
 		return diasSancion;
+	}
+
+	public Integer getMaxLibrosPrestamo() {
+		return maxLibrosPrestammo;
 	}
 
 	public void setDiasPrestamo(Integer diasPrestamo) {
@@ -527,6 +462,10 @@ public class Main extends Application {
 
 	public Properties getProperty() {
 		return property;
+	}
+
+	public void setMaxLibrosPrestamo(Integer maxDiasLibrosPrestamo) {
+		this.maxLibrosPrestammo = maxDiasLibrosPrestamo;
 	}
 
 	public Stage getStage() {
@@ -545,27 +484,75 @@ public class Main extends Application {
 		launch(args);
 	}
 
-	private void crearRolesPorDefecto() {
+	private void cargarPropiedades() {
+		property = new Properties();
 		try {
-			Rol rolAdmin = new Rol();
-			rolAdmin.setTipo("Administrador");
-			ServiceLocator.getRolService().crearRol(rolAdmin.toItem());
-			rolAdmin.setCodigo(1);
-			Rol rolLector = new Rol();
-			rolLector.setTipo("Lector");
-			ServiceLocator.getRolService().crearRol(rolLector.toItem());
-			Rol rolBibliotecario = new Rol();
-			rolBibliotecario.setTipo("Bibliotecario");
-			ServiceLocator.getRolService().crearRol(rolBibliotecario.toItem());
-			Usuario usuarioAdmin = new Usuario();
-			usuarioAdmin.setNombre("admin");
-			usuarioAdmin.setUsuario("admin");
-			usuarioAdmin.setPassword("admin");
-			usuarioAdmin.setRol(rolAdmin);
-			ServiceLocator.getUsuarioService().crearUsuario(usuarioAdmin.toItem());
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
+			property.load(Main.class.getResourceAsStream("/dad/bibliotecafx/config/config.properties"));
+			diasPrestamo = Integer.parseInt(property.getProperty("biblioteca.diasprestamo"));
+			diasSancion = Integer.parseInt(property.getProperty("biblioteca.diassancion"));
+			maxLibrosPrestammo = Integer.parseInt(property.getProperty("biblioteca.maxlibrosprestamo"));
+		} catch (IOException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al cargar el fichero de configuración:\n" + e1.getMessage()
+					+ "\n" + e1.getCause());
+			alert.showAndWait();
+			e1.printStackTrace();
+		}
+	}
+
+	private void guardarPropiedades() {
+		URI uri = null;
+		try {
+			uri = Main.class.getResource("/dad/bibliotecafx/config/config.properties").toURI();
+		} catch (URISyntaxException e1) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText(
+					"Ha ocurrido un error con el fichero de propiedades:\n" + e1.getMessage() + "\n" + e1.getCause());
+			alert.showAndWait();
+			e1.printStackTrace();
+		}
+		File f = new File(uri);
+		FileOutputStream file = null;
+
+		try {
+			file = new FileOutputStream(f);
+		} catch (FileNotFoundException e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText(
+					"No se ha encontrado el fichero de configuración:\n" + e.getMessage() + "\n" + e.getCause());
+			alert.showAndWait();
 			e.printStackTrace();
+		}
+
+		property.setProperty("biblioteca.diasprestamo", String.valueOf(diasPrestamo));
+		property.setProperty("biblioteca.diassancion", String.valueOf(diasSancion));
+		property.setProperty("biblioteca.maxlibrosprestamo", String.valueOf(maxLibrosPrestammo));
+		try {
+			property.store(file, null);
+
+		} catch (IOException io) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText("Ha ocurrido un error al guardar los datos en el fichero de propiedades:\n"
+					+ io.getMessage() + "\n" + io.getCause());
+			alert.showAndWait();
+			io.printStackTrace();
+		} finally {
+			if (file != null) {
+				try {
+					file.close();
+				} catch (IOException io) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setContentText("Ha ocurrido un error al cerrar el fichero de propiedades:\n" + io.getMessage()
+							+ "\n" + io.getCause());
+					alert.showAndWait();
+					io.printStackTrace();
+				}
+			}
 		}
 	}
 }

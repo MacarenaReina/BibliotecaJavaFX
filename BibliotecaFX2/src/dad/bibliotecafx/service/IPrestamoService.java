@@ -2,13 +2,13 @@ package dad.bibliotecafx.service;
 
 import java.util.List;
 
-import dad.bibliotecafx.service.items.PrestamoItem;
-import dad.bibliotecafx.service.items.UsuarioItem;
+import dad.bibliotecafx.modelo.Prestamo;
+import dad.bibliotecafx.modelo.Usuario;
 
 public interface IPrestamoService {
-	public List<PrestamoItem> listarPrestamos() throws ServiceException;
-	public void crearPrestamo(PrestamoItem prestamo) throws ServiceException;
-	public void actualizarPrestamo(PrestamoItem prestamo) throws ServiceException;
-	public void eliminarPrestamo(PrestamoItem prestamo) throws ServiceException;
-	public List<PrestamoItem> prestamosPorUsuario(UsuarioItem usuario) throws ServiceException;
+	public List<Prestamo> getPrestamos() throws ServiceException;
+	public void crearPrestamo(Prestamo prestamo) throws ServiceException;
+	public void actualizarPrestamo(Prestamo prestamo) throws ServiceException;
+	public void eliminarPrestamo(Prestamo prestamo) throws ServiceException;
+	public List<Prestamo> prestamosPorUsuario(Usuario usuario) throws ServiceException;
 }

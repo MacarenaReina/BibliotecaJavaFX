@@ -7,7 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.BibliotecaPrincipalController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@BibliotecaStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.BibliotecaPrincipalController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -35,7 +35,7 @@
                      <center>
                         <GridPane fx:id="librosGridPane" BorderPane.alignment="CENTER">
                            <children>
-                              <TextField fx:id="libroText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Libro..." GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
+                              <TextField fx:id="libroText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Buscar libro..." GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <GridPane.margin>
                                     <Insets left="10.0" right="10.0" />
                                  </GridPane.margin>
@@ -72,7 +72,7 @@
                      <center>
                         <GridPane fx:id="usuariosGridPane" BorderPane.alignment="CENTER">
                            <children>
-                              <TextField fx:id="usuarioText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Usuario..." GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
+                              <TextField fx:id="usuarioText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Buscar usuario..." GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <GridPane.margin>
                                     <Insets left="10.0" right="10.0" />
                                  </GridPane.margin>
@@ -116,17 +116,17 @@
                            <right>
                               <FlowPane alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="257.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <Button fx:id="altaUsuButton" defaultButton="true" mnemonicParsing="false" onAction="#onAltaUsuario" text="Dar de alta">
+                                    <Button fx:id="altaUsuButton" defaultButton="true" mnemonicParsing="false" onAction="#onAltaUsuario">
                                        <FlowPane.margin>
                                           <Insets right="10.0" />
                                        </FlowPane.margin>
                                     </Button>
-                                    <Button fx:id="modificarUsuButton" mnemonicParsing="false" onAction="#onModificarUsuario" text="Modificar">
+                                    <Button fx:id="modificarUsuButton" mnemonicParsing="false" onAction="#onModificarUsuario" >
                                        <FlowPane.margin>
                                           <Insets right="10.0" />
                                        </FlowPane.margin>
                                     </Button>
-                                    <Button fx:id="bajaUsuButton" mnemonicParsing="false" onAction="#onBajaUsuario" text="Dar de baja">
+                                    <Button fx:id="bajaUsuButton" mnemonicParsing="false" onAction="#onBajaUsuario" >
                                        <FlowPane.margin>
                                           <Insets />
                                        </FlowPane.margin>
@@ -148,20 +148,23 @@
                      <bottom>
                         <FlowPane fx:id="prestamosFlowPane" alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="239.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="nuevoPresButton" defaultButton="true" mnemonicParsing="false" onAction="#onNuevoPrestamo" text="Nuevo">
+                              <Button fx:id="devolucionButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onDevolucionPrestamoButton" text="Devolución">
+                                 <FlowPane.margin>
+                                    <Insets right="10.0" />
+                                 </FlowPane.margin></Button>
+                              <Button fx:id="nuevoPresButton" defaultButton="true" mnemonicParsing="false" onAction="#onNuevoPrestamo" >
                                  <FlowPane.margin>
                                     <Insets right="10.0" />
                                  </FlowPane.margin>
                               </Button>
-                              <Button fx:id="eliminarPresButton" mnemonicParsing="false" onAction="#onEliminarPrestamo" text="Eliminar">
+                              <Button fx:id="editarPresButton" mnemonicParsing="false" onAction="#onEditarPrestamoButton" >
                                  <FlowPane.margin>
                                     <Insets right="10.0" />
                                  </FlowPane.margin></Button>
-                              <Button fx:id="editarPresButton" mnemonicParsing="false" onAction="#onEditarPrestamoButton" text="Editar">
+                              <Button fx:id="eliminarPresButton" mnemonicParsing="false" onAction="#onEliminarPrestamo" >
                                  <FlowPane.margin>
                                     <Insets right="10.0" />
                                  </FlowPane.margin></Button>
-                              <Button fx:id="devolucionButton" mnemonicParsing="false" onAction="#onDevolucionPrestamoButton" text="Devolución" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" right="10.0" top="10.0" />
@@ -173,7 +176,7 @@
                            <children>
                               <FlowPane fx:id="presBuscarFlowPane" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="200.0">
                                  <children>
-                                    <TextField fx:id="prestamoText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Préstamo...">
+                                    <TextField fx:id="prestamoText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Buscar préstamo...">
                                        <FlowPane.margin>
                                           <Insets right="10.0" />
                                        </FlowPane.margin>
@@ -214,17 +217,17 @@
                      <bottom>
                         <FlowPane fx:id="sancionesFlowPane" alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="239.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="nuevaSancionButton" defaultButton="true" mnemonicParsing="false" onAction="#onNuevaSancion" text="Nuevo">
+                              <Button fx:id="nuevaSancionButton" defaultButton="true" mnemonicParsing="false" onAction="#onNuevaSancion" >
                                  <FlowPane.margin>
                                     <Insets right="10.0" />
                                  </FlowPane.margin>
                               </Button>
-                              <Button fx:id="eliminarSancionButton" mnemonicParsing="false" onAction="#onEliminarSancion" text="Eliminar">
+                              <Button fx:id="editarSancionButton" mnemonicParsing="false" onAction="#onEditarSancion" >
                                  <FlowPane.margin>
                                     <Insets right="10.0" />
                                  </FlowPane.margin>
                               </Button>
-                              <Button fx:id="editarSancionButton" mnemonicParsing="false" onAction="#onEditarSancion" text="Editar">
+                              <Button fx:id="eliminarSancionButton" mnemonicParsing="false" onAction="#onEliminarSancion" >
                                  <FlowPane.margin>
                                     <Insets right="10.0" />
                                  </FlowPane.margin>
@@ -241,7 +244,7 @@
                            <children>
                               <FlowPane fx:id="sancionBuscarFlowPane" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="200.0">
                                  <children>
-                                    <TextField fx:id="sancionesText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Sanción...">
+                                    <TextField fx:id="sancionesText" maxWidth="-Infinity" prefHeight="25.0" prefWidth="249.0" promptText="Buscar sanción...">
                                        <FlowPane.margin>
                                           <Insets right="10.0" />
                                        </FlowPane.margin>
