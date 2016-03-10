@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="239.0" prefWidth="383.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.UsuarioAltaController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="239.0" prefWidth="383.0" stylesheets="@BibliotecaStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.UsuarioAltaController">
    <center>
       <GridPane prefHeight="113.0" prefWidth="298.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -85,12 +85,12 @@
          <right>
             <FlowPane alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="152.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="insertarUsuButton" mnemonicParsing="false" onAction="#onInsertarUsuButton" text="Dar de alta">
+                  <Button fx:id="insertarUsuButton" mnemonicParsing="false" onAction="#onInsertarUsuButton" >
                      <FlowPane.margin>
                         <Insets right="10.0" />
                      </FlowPane.margin>
                   </Button>
-                  <Button fx:id="cancelarUsuButton" mnemonicParsing="false" onAction="#onCancelarButton" text="Cancelar" />
+                  <Button fx:id="cancelarUsuButton" mnemonicParsing="false" onAction="#onCancelarButton" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="10.0" right="10.0" top="10.0" />

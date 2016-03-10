@@ -207,7 +207,6 @@ public class BibliotecaPrincipalController {
 
 	@FXML
 	private void onGenerarCarnetUsu(ActionEvent e) {
-		// TODO: Hacer en segundo plano:. Poner código de barras y foto...
 		int usuariosSeleccionados = usuariosTable.getSelectionModel().getSelectedItems().size();
 		if (usuariosSeleccionados == 0) {
 			Alert alert = new Alert(AlertType.WARNING);
@@ -215,20 +214,26 @@ public class BibliotecaPrincipalController {
 			alert.setContentText("Debe seleccionar un usuario");
 			alert.showAndWait();
 		} else {
-			main.getPrimaryStage().getScene().setCursor(javafx.scene.Cursor.WAIT);
-			for (Usuario usu : usuariosTable.getSelectionModel().getSelectedItems()) {
-				try {
-					new ReportsUtils().generarCarnet(usu);
-				} catch (IOException | JRException e1) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Error");
-					alert.setContentText(
-							"Ha ocurrido un error al imprimir el carnet:\n" + e1.getMessage() + "\n" + e1.getCause());
-					alert.showAndWait();
-					e1.printStackTrace();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					generarCarnetBackGround();
 				}
+			}).start();
+		}
+	}
+
+	private void generarCarnetBackGround() {
+		for (Usuario usu : usuariosTable.getSelectionModel().getSelectedItems()) {
+			try {
+				new ReportsUtils().generarCarnet(usu);
+			} catch (IOException | JRException e1) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setContentText("Ha ocurrido un error al imprimir el carnet");
+				alert.showAndWait();
+				e1.printStackTrace();
 			}
-			main.getPrimaryStage().getScene().setCursor(javafx.scene.Cursor.DEFAULT);
 		}
 	}
 
@@ -300,11 +305,6 @@ public class BibliotecaPrincipalController {
 				for (Usuario usu : usuariosTable.getSelectionModel().getSelectedItems()) {
 					try {
 						ServiceLocator.getUsuarioService().eliminarUsuario(usu);
-						if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
-							usuariosTable.setItems(main.getUsuariosData());
-						} else {
-							usuariosTable.setItems(main.getUsuariosLectoresData());
-						}
 					} catch (ServiceException | RuntimeException e1) {
 						Alert alertError = new Alert(AlertType.ERROR);
 						alertError.setTitle("Error");
@@ -314,6 +314,11 @@ public class BibliotecaPrincipalController {
 						DataBase.getSession().close();
 						e1.printStackTrace();
 					}
+				}
+				if (usuarioLogged.getRol().getTipo().equals("Administrador")) {
+					usuariosTable.setItems(main.getUsuariosData());
+				} else {
+					usuariosTable.setItems(main.getUsuariosLectoresData());
 				}
 			}
 		}
@@ -351,7 +356,6 @@ public class BibliotecaPrincipalController {
 			alert.setContentText("¿Seguro que quiere eliminar " + prestamosSeleccionados + " préstamos seleccionados?");
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.isPresent() && result.get() == ButtonType.OK) {
-				// TODO: calcular correctamente el stock
 				for (Prestamo prest : prestamosTable.getSelectionModel().getSelectedItems()) {
 					try {
 						int cant;

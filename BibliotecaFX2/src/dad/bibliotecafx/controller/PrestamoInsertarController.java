@@ -94,6 +94,7 @@ public class PrestamoInsertarController {
 
 		if (usuariosPrestTable.isVisible()) {
 			atrasPrestButton.setDisable(true);
+			finalizarPresButton.setDisable(true);
 		}
 
 		nombrePrestTableColum.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
@@ -258,16 +259,18 @@ public class PrestamoInsertarController {
 
 	@FXML
 	private void onAtrasPrestButton() {
-		if (librosPrestTable.isVisible()) {
-			usuariosPrestTable.setVisible(true);
-			librosPrestTable.setVisible(false);
+		if (librosBorderPane.isVisible()) {
+			usuariosBorderPane.setVisible(true);
+			librosBorderPane.setVisible(false);
 			prestamoScrollPane.setVisible(false);
+			prestamosTextArea.setVisible(false);
 			atrasPrestButton.setDisable(true);
 		} else if (prestamoScrollPane.isVisible()) {
-			usuariosPrestTable.setVisible(false);
-			librosPrestTable.setVisible(true);
+			usuariosBorderPane.setVisible(false);
+			librosBorderPane.setVisible(true);
 			prestamoScrollPane.setVisible(false);
-			siguientePrestButton.setText("Siguiente");
+			prestamosTextArea.setVisible(false);
+			siguientePrestButton.setDisable(false);
 		}
 	}
 

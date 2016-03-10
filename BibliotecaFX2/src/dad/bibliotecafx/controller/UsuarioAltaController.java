@@ -53,9 +53,11 @@ public class UsuarioAltaController {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if (!newValue.booleanValue()) {
-					Random rnd = new Random();
+					if(!nombreUsuText.getText().isEmpty()){
+					Random rnd = new Random();					
 					nombreUsuarioUsuText.setText(nombreUsuarioUsuText.getText() + rnd.nextInt(100));
 					// contraseniaUsuText.setText(nombreUsuarioUsuText.getText());
+					}
 				}
 			}
 		});

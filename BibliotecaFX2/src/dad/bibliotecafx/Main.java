@@ -89,8 +89,8 @@ public class Main extends Application {
 	public void showBibliotecaLoginScene() throws IOException {
 		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaLogin.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
-		this.primaryStage.setWidth(300);
-		this.primaryStage.setHeight(200);
+//		this.primaryStage.setWidth(350);
+//		this.primaryStage.setHeight(250);
 		this.primaryStage.centerOnScreen();
 		this.primaryStage.setResizable(false);
 
