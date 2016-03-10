@@ -90,9 +90,7 @@ public class Main extends Application {
 		URL url = getClass().getResource("/dad/bibliotecafx/views/BibliotecaLogin.fxml");
 		FXMLLoader loader = new FXMLLoader(url);
 //		this.primaryStage.setWidth(350);
-//		this.primaryStage.setHeight(250);
-		this.primaryStage.centerOnScreen();
-		this.primaryStage.setResizable(false);
+//		this.primaryStage.setHeight(250);		
 
 		Scene scene = new Scene(loader.load());
 
@@ -100,6 +98,8 @@ public class Main extends Application {
 		controller.setMain(this);
 
 		this.primaryStage.setScene(scene);
+		this.primaryStage.centerOnScreen();
+		this.primaryStage.setResizable(false);
 		this.primaryStage.show();
 	}
 

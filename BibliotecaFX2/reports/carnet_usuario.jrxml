@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-03-10T08:35:57 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carnet_usuario" pageWidth="569" pageHeight="275" orientation="Landscape" columnWidth="529" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="25c57431-f4f7-402e-8ec1-fac3c6e98a85">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="IMAGEN" class="java.awt.Image"/>
+	<parameter name="FOTO" class="java.awt.Image"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Long">
+		<fieldDescription><![CDATA[codigo]]></fieldDescription>
+	</field>
+	<field name="usuario" class="java.lang.String">
+		<fieldDescription><![CDATA[usuario]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<fieldDescription><![CDATA[nombre]]></fieldDescription>
+	</field>
+	<field name="rol" class="dad.bibliotecafx.modelo.Rol">
+		<fieldDescription><![CDATA[rol]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="109" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="-20" y="0" width="569" height="106" forecolor="#A3FFCB" backcolor="#2CAB89" uuid="2aad05e5-bde2-4cce-af08-2da7d488ceb9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="33" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Biblioteca MacJoy]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="42" y="28" width="50" height="50" uuid="57d85f25-6263-47f8-bd90-2ea23a8ebe7c"/>
+				<imageExpression><![CDATA[$P{IMAGEN}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="450" y="28" width="50" height="50" uuid="e42712d2-851c-45e9-b6e1-336f6fedfe30"/>
+				<imageExpression><![CDATA[$P{FOTO}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="129" splitType="Stretch">
+			<textField>
+				<reportElement x="150" y="50" width="60" height="30" uuid="8451f721-f782-444b-8db1-d5f3b9d08325"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="50" width="170" height="30" uuid="6d3fbc4f-98fe-4692-91bd-fd086e2251b3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="95" width="380" height="30" uuid="c698ee87-5b5c-48e5-99f0-bfd4cbcf5587"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="50" width="140" height="30" uuid="edf05742-6b9c-4abb-8a66-2d0efde99347"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de usuario:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="10" width="140" height="30" uuid="65721255-31a4-4d9a-b8c9-c8a2cffaafcc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de expedición:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="95" width="140" height="30" uuid="4bb187a3-a275-4b4b-af1c-fecda6223cad"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre completo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="50" width="130" height="30" uuid="c87ddf53-0757-452a-a986-9c36cf77e7b6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre de usuario:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="150" y="10" width="220" height="30" uuid="196c047a-9505-4856-a9b2-b4e79fef9c58"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="380" y="10" width="150" height="30" uuid="2e8f5cf8-541b-4496-ba81-db2db37222aa"/>
+				<jr:Codabar xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["123456789"]]></jr:codeExpression>
+				</jr:Codabar>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

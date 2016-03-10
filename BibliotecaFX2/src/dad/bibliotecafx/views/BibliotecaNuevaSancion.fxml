@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@BibliotecaStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dad.bibliotecafx.controller.SancionInsertarController">
+   <bottom>
+      <FlowPane alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="insertarButton" mnemonicParsing="false" onAction="#onInsertarButton" >
+               <FlowPane.margin>
+                  <Insets right="10.0" />
+               </FlowPane.margin>
+            </Button>
+            <Button fx:id="cancelarButton" mnemonicParsing="false" onAction="#onCancelarButton" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" right="10.0" top="10.0" />
+         </padding>
+      </FlowPane>
+   </bottom>
+   <top>
+      <FlowPane prefHeight="25.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Fecha de inicio de la sancion:">
+               <FlowPane.margin>
+                  <Insets right="10.0" />
+               </FlowPane.margin>
+            </Label>
+            <DatePicker fx:id="datePickerInicio">
+               <FlowPane.margin>
+                  <Insets right="10.0" />
+               </FlowPane.margin></DatePicker>
+            <TextField fx:id="buscarPrestamoText" promptText="Buscar préstamo..." />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" top="10.0" />
+         </BorderPane.margin>
+      </FlowPane>
+   </top>
+   <center>
+      <TableView fx:id="prestamosTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+         <columns>
+            <TableColumn fx:id="prestamoTableColum" prefWidth="75.0" text="Préstamo" />
+            <TableColumn fx:id="usuarioTableColumn" prefWidth="75.0" text="Usuario" />
+         </columns>
+      </TableView>
+   </center>
+</BorderPane>

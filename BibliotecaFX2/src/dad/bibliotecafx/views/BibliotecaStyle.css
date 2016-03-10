@@ -1,0 +1,39 @@
+#altaUsuButton, #nuevoPresButton, #nuevaSancionButton, #anadirButton {
+	-fx-graphic: url('../images/insertar.png');	
+}
+
+#modificarUsuButton, #editarPresButton, #editarSancionButton, #modificarButton {
+	-fx-graphic: url('../images/editar.png');
+}
+
+#bajaUsuButton, #eliminarPresButton, #eliminarSancionButton, #eliminarButton {
+	-fx-graphic: url('../images/eliminar.png');
+}
+
+#siguientePrestButton {
+	-fx-graphic: url('../images/siguiente.png');	
+}
+
+#atrasPrestButton {
+	-fx-graphic: url('../images/atras.png');
+}
+
+#finalizarPresButton, #insertarUsuButton, #modificarModifUsuButton, #aceptarButton, #insertarButton {
+	-fx-graphic: url('../images/finalizar.png');
+}
+
+#cancelarUsuButton, #cancelarModifUsuButton, #cancelarButton {
+	-fx-graphic: url('../images/cancelar.png');
+}
+
+#usuarioLabel {
+	-fx-graphic: url('../images/login.png');
+}
+
+#passwordLabel {
+	-fx-graphic: url('../images/password.png');
+}
+
+#loginButton {
+	-fx-graphic: url('../images/entrar.png');
+}
