@@ -160,45 +160,17 @@ public class BibliotecaPrincipalController {
 		codigoPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().codigoProperty().asObject());
 		libroPresTableColumn.setCellValueFactory(new PropertyValueFactory<Prestamo, Libro>("libro"));
 		usuarioPresTableColumn.setCellValueFactory(cellData -> cellData.getValue().usuarioProperty());
-		fechainiPresTableColumn.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Prestamo, String>, ObservableValue<String>>() {
-					@Override
-					public ObservableValue<String> call(CellDataFeatures<Prestamo, String> param) {
-						return new SimpleStringProperty(DateUtils.toStringDate(param.getValue().getFechaPrestamo()));
-					}
-				});
-		fechadevolPresTableColumn.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Prestamo, String>, ObservableValue<String>>() {
-					@Override
-					public ObservableValue<String> call(CellDataFeatures<Prestamo, String> param) {
-						if (param.getValue().getFechaDevolucion() != null)
-							return new SimpleStringProperty(
-									DateUtils.toStringDate(param.getValue().getFechaDevolucion()));
-						else
-							return null;
-					}
-				});
+		fechainiPresTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(DateUtils.toStringDate(cellData.getValue().getFechaPrestamo())));
+		fechadevolPresTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(DateUtils.toStringDate(cellData.getValue().getFechaDevolucion())));
+
 
 		// Sanciones:
 		sancionesTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		codPrestamoColumn.setCellValueFactory(cellData -> cellData.getValue().prestamoProperty());
 		usuarioSancionTableColumn
 				.setCellValueFactory(cellData -> cellData.getValue().prestamoProperty().get().usuarioProperty());
-		fechainiSancionTableColumn.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Sancion, String>, ObservableValue<String>>() {
-					@Override
-					public ObservableValue<String> call(CellDataFeatures<Sancion, String> param) {
-						return new SimpleStringProperty(DateUtils.toStringDate(param.getValue().getFechaAlta()));
-					}
-				});
-		fechafinSancionTableColumn.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Sancion, String>, ObservableValue<String>>() {
-					@Override
-					public ObservableValue<String> call(CellDataFeatures<Sancion, String> param) {
-						return new SimpleStringProperty(
-								DateUtils.toStringDate(param.getValue().getFechaFinalizacion()));
-					}
-				});
+		fechainiSancionTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(DateUtils.toStringDate(cellData.getValue().getFechaAlta())));
+		fechafinSancionTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(DateUtils.toStringDate(cellData.getValue().getFechaFinalizacion())));
 	}
 
 	// A partir de aquí es de la biblioteca:
