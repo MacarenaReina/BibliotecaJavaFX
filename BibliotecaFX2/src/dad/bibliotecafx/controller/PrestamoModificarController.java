@@ -1,10 +1,7 @@
 package dad.bibliotecafx.controller;
 
 import java.text.ParseException;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -48,6 +45,7 @@ public class PrestamoModificarController {
 	SortedList<Libro> sortedDataLibros;
 	private FilteredList<Usuario> filtroUsuarios;
 	SortedList<Usuario> sortedDataUsuarios;
+	@SuppressWarnings("unused")
 	private Usuario usuarioLogged;
 
 	private Boolean modoAnadir;
@@ -124,8 +122,6 @@ public class PrestamoModificarController {
 
 	@FXML
 	private void onAceptarButton() {
-		// TODO: Revisar la lista de los libros para prestar...
-
 		if (usuariosBorderPane.isVisible()) {
 			usuario = usuariosPrestTable.getSelectionModel().getSelectedItem();
 			usuarioText.setText(usuario.getNombre());
@@ -140,11 +136,6 @@ public class PrestamoModificarController {
 			for (Libro libro : librosPrestTable.getSelectionModel().getSelectedItems()) {
 				libros.add(libro);
 			}
-
-			// for (Libro libro :
-			// librosPrestTable.getSelectionModel().getSelectedItems()) {
-			// libros.add(libro);
-			// }
 			libroText.setText(libros + "");
 			gridPaneInfo.setVisible(true);
 			librosBorderPane.setVisible(false);
@@ -245,12 +236,6 @@ public class PrestamoModificarController {
 		for (Libro l : this.libros) {
 			librosParaPrestamoSinComprobarCantidad.add(l);
 		}
-
-		// if(librosParaPrestamoSinComprobarCantidad.size() == 0){
-		// for (Libro libro : prestamo.getLibro()) {
-		// librosParaPrestamoSinComprobarCantidad.add(libro);
-		// }
-		// }
 
 		int totalLibros = librosEnPrestamos.size() + librosParaPrestamoSinComprobarCantidad.size();
 
